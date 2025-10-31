@@ -12,7 +12,7 @@ export function NavBar() {
                         Home
                     </Link>
                     <Link to="/login" className="hover:bg-blue-700 px-3 py-2 rounded">
-                        Login
+                        Iniciar Sesión
                     </Link>
                 </div>
             </div>

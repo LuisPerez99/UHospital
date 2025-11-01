@@ -1,19 +1,45 @@
 import { Link } from "react-router"
 
 export function LoginForm() {
+    const handleLogin = (event: React.FormEvent) => {
+        event.preventDefault()
+        
+        try {
+            fetch("http://localhost:8080/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username: (document.getElementById("username") as HTMLInputElement).value,
+                    password: (document.getElementById("password") as HTMLInputElement).value,
+                }),
+            })
+            .then((response) => {
+                if (response.ok) {
+                    alert("Inicio de sesión exitoso")
+                } else {
+                    alert("Error en el inicio de sesión")
+                }
+            })
+        } catch (error) {
+            console.error("Error:", error)
+        }
+    }
+
     return (
         <>
             <form className="max-w-md mx-auto mt-8 p-4 border border-gray-300 rounded">
                 <h2 className="text-2xl font-bold mb-4">Iniciar Sesión</h2>
                 <div className="mb-4">
-                    <label className="block text-gray-700 mb-2" htmlFor="email">
-                        Correo Electrónico
+                    <label className="block text-gray-700 mb-2" htmlFor="username">
+                        Nombre de Usuario
                     </label>
                     <input
-                        type="email"
-                        id="email"
+                        type="text"
+                        id="username"
                         className="w-full px-3 py-2 border border-gray-300 rounded"
-                        placeholder="Ingrese su correo electrónico"
+                        placeholder="Ingrese su nombre de usuario"
                     />
                 </div>
                 <div className="mb-4">
@@ -30,6 +56,7 @@ export function LoginForm() {
                 <button
                     type="submit"
                     className="w-full bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"
+                    onClick={handleLogin}
                 >
                     Iniciar Sesión
                 </button>

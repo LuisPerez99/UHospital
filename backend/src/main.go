@@ -9,6 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/gin-contrib/cors"
+
+	"github.com/joho/godotenv"
+
+	"os"
 )
 
 func homeHandler(c *gin.Context) {
@@ -41,10 +45,30 @@ func postHandler(c *gin.Context) {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file:", err)
+	}
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	origin_port := os.Getenv("ORIGIN_PORT")
+	if origin_port == "" {
+		origin_port = "5173"
+	}
+
+	hostname := os.Getenv("HOSTNAME")
+	if hostname == "" {
+		hostname = "localhost"
+	}
+
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowOrigins:     []string{"http://" + hostname + ":" + origin_port},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -60,8 +84,5 @@ func main() {
 	usersGroup := r.Group("/api/users")
 	users.UserRoutes(usersGroup)
 
-	err := r.Run(":8080")
-	if err != nil {
-		fmt.Println("Failed to start server:", err)
-	}
+	r.Run(":" + port)
 }

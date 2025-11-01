@@ -5,7 +5,7 @@ export function LoginForm() {
         event.preventDefault()
         
         try {
-            fetch("http://localhost:8080/login", {
+            fetch("http://localhost:8080/api/users/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

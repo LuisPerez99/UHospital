@@ -28,11 +28,3 @@ type Doctor struct {
 	Telefono        string `json:"telefono"`
 	Especialidad    string `json:"especialidad"`
 }
-
-func LoginUser(username, password string) bool {
-	// Lógica de autenticación (simulada)
-	if username == "admin" && password == "password" {
-		return true
-	}
-	return false
-}

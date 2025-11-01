@@ -57,23 +57,8 @@ func main() {
 
 	r.POST("/post", postHandler)
 
-	r.POST("/login", func(c *gin.Context) {
-		var json struct {
-			Username string `json:"username" binding:"required"`
-			Password string `json:"password" binding:"required"`
-		}
-
-		if err := c.ShouldBindJSON(&json); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		if users.LoginUser(json.Username, json.Password) {
-			c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
-		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials"})
-		}
-	})
+	usersGroup := r.Group("/api/users")
+	users.UserRoutes(usersGroup)
 
 	err := r.Run(":8080")
 	if err != nil {

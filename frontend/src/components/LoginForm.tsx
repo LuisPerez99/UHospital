@@ -1,11 +1,14 @@
 import { Link } from "react-router"
 
 export function LoginForm() {
+    const HOST = import.meta.env.VITE_BACKEND_HOST || "localhost"
+    const PORT = import.meta.env.VITE_BACKEND_PORT || "8080"
+
     const handleLogin = (event: React.FormEvent) => {
         event.preventDefault()
         
         try {
-            fetch("http://localhost:8080/api/users/login", {
+            fetch(`http://${HOST}:${PORT}/api/users/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
+	"uhospital/backend/src/db"
 	"uhospital/backend/src/users"
 
 	"github.com/gin-gonic/gin"
@@ -64,6 +66,26 @@ func main() {
 	if hostname == "" {
 		hostname = "localhost"
 	}
+	// Inicializar la base de datos
+	dbPortStr := os.Getenv("DB_PORT")
+	if dbPortStr == "" {
+		fmt.Println("DB_PORT is not set")
+		return
+	}
+	dbPort, err := strconv.Atoi(dbPortStr)
+	if err != nil {
+		fmt.Printf("Invalid DB_PORT value: %v\n", err)
+		return
+	}
+
+	err = db.Connect(os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"), dbPort)
+	if err != nil {
+		fmt.Println("Error connecting to the database:", err)
+		return
+	}
+	defer db.Close()
+
+	fmt.Printf("Conectado a la base de datos %s en %s:%d\n", os.Getenv("DB_NAME"), os.Getenv("DB_HOST"), dbPort)
 
 	r := gin.Default()
 
@@ -84,5 +106,8 @@ func main() {
 	usersGroup := r.Group("/api/users")
 	users.UserRoutes(usersGroup)
 
-	r.Run(":" + port)
+	err = r.Run(":" + port)
+	if err != nil {
+		fmt.Println("Error starting server:", err)
+	}
 }

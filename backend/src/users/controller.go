@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	. "uhospital/backend/src/utilities"
+	"uhospital/backend/src/utilities"
 )
 
 func LoginHandler(c *gin.Context) {
@@ -38,7 +38,7 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := HashPassword(reqData.User.Password)
+	hashedPassword, err := utilities.HashPassword(reqData.User.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error hashing password"})
 		return

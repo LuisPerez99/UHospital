@@ -23,35 +23,36 @@ func LoginHandler(c *gin.Context) {
 }
 
 func RegisterHandler(c *gin.Context) {
-	var user User
-	if err := c.ShouldBindJSON(&user); err != nil {
+	var reqData struct {
+		User          User          `json:"user"`
+		Administrador Administrador `json:"administrador"`
+	}
+
+	if err := c.ShouldBindJSON(&reqData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	hashed, err := HashPassword(user.Password)
+	if reqData.User.Email != reqData.Administrador.Email {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User email and Administrador email must match"})
+		return
+	}
+
+	hashedPassword, err := HashPassword(reqData.User.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error hashing password"})
 		return
 	}
-	user.Password = hashed
+	reqData.User.Password = hashedPassword
 
-	if err := RegisterUser(&user); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
+	if err := RegisterUser(&reqData.User); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering user"})
 		return
 	}
 
-	if user.Role == "administrador" {
-		admin := Administrador{
-			Nombre:   user.Username, // Assuming username as nombre for simplicity
-			Apellido: "Apellido",    // Placeholder
-			Telefono: "0000000000",  // Placeholder
-			Email:    user.Email,
-		}
-		if err := RegisterAdministrador(&admin); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register administrador"})
-			return
-		}
+	if err := RegisterAdministrador(&reqData.Administrador); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering administrador"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Registration successful"})

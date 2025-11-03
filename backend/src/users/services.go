@@ -20,11 +20,31 @@ func RegisterUser(user *User) error {
 	return nil
 }
 
-func RegisterAdministrador(admin *Administrador) error {
+func RegisterAdmin(admin *Administrador) error {
 	query := "INSERT INTO admin (nombre, apellido, telefono, email) VALUES (?, ?, ?, ?)"
 	_, err := db.Exec(query, admin.Nombre, admin.Apellido, admin.Telefono, admin.Email)
 	if err != nil {
 		fmt.Printf("Error registering administrador: %v\n", err)
+		return err
+	}
+	return nil
+}
+
+func RegisterPaciente(paciente *Paciente) error {
+	query := "INSERT INTO paciente (nombre, apellido, email, fecha_nacimiento, genero, telefono, direccion) VALUES (?, ?, ?, ?, ?, ?, ?)"
+	_, err := db.Exec(query, paciente.Nombre, paciente.Apellido, paciente.Email, paciente.FechaNacimiento, paciente.Genero, paciente.Telefono, paciente.Direccion)
+	if err != nil {
+		fmt.Printf("Error registering paciente: %v\n", err)
+		return err
+	}
+	return nil
+}
+
+func RegisterDoctor(doctor *Doctor) error {
+	query := "INSERT INTO doctor (nombre, apellido, especialidad, email, telefono) VALUES (?, ?, ?, ?, ?)"
+	_, err := db.Exec(query, doctor.Nombre, doctor.Apellido, doctor.Especialidad, doctor.Email, doctor.Telefono)
+	if err != nil {
+		fmt.Printf("Error registering doctor: %v\n", err)
 		return err
 	}
 	return nil

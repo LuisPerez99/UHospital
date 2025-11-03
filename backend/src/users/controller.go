@@ -22,7 +22,28 @@ func LoginHandler(c *gin.Context) {
 	}
 }
 
-func RegisterHandler(c *gin.Context) {
+func registerUserWithRole(c *gin.Context, user *User, registerRole func() error) {
+	hashedPassword, err := utilities.HashPassword(user.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error hashing password"})
+		return
+	}
+	user.Password = hashedPassword
+
+	if err := RegisterUser(user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering user"})
+		return
+	}
+
+	if err := registerRole(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering role-specific data"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Registration successful"})
+}
+
+func RegisterAdminHandler(c *gin.Context) {
 	var reqData struct {
 		User          User          `json:"user"`
 		Administrador Administrador `json:"administrador"`
@@ -33,27 +54,39 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	if reqData.User.Email != reqData.Administrador.Email {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User email and Administrador email must match"})
+	registerUserWithRole(c, &reqData.User, func() error {
+		return RegisterAdmin(&reqData.Administrador)
+	})
+}
+
+func RegisterPacienteHandler(c *gin.Context) {
+	var reqData struct {
+		User     User     `json:"user"`
+		Paciente Paciente `json:"paciente"`
+	}
+
+	if err := c.ShouldBindJSON(&reqData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	hashedPassword, err := utilities.HashPassword(reqData.User.Password)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error hashing password"})
-		return
-	}
-	reqData.User.Password = hashedPassword
+	registerUserWithRole(c, &reqData.User, func() error {
+		return RegisterPaciente(&reqData.Paciente)
+	})
+}
 
-	if err := RegisterUser(&reqData.User); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering user"})
-		return
-	}
-
-	if err := RegisterAdministrador(&reqData.Administrador); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering administrador"})
-		return
+func RegisterDoctorHandler(c *gin.Context) {
+	var reqData struct {
+		User   User   `json:"user"`
+		Doctor Doctor `json:"doctor"`
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Registration successful"})
+	if err := c.ShouldBindJSON(&reqData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	registerUserWithRole(c, &reqData.User, func() error {
+		return RegisterDoctor(&reqData.Doctor)
+	})
 }

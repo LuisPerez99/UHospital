@@ -15,18 +15,20 @@ type Administrador struct {
 	Email    string `json:"email"`
 }
 
-type Cliente struct {
+type Paciente struct {
 	Nombre          string `json:"nombre"`
-	FechaNacimiento string `json:"fecha_nacimiento"`
+	Apellido        string `json:"apellido"`
 	Email           string `json:"email"`
+	FechaNacimiento string `json:"fecha_nacimiento"`
+	Genero          string `json:"genero"`
 	Telefono        string `json:"telefono"`
 	Direccion       string `json:"direccion"`
 }
 
 type Doctor struct {
-	Nombre          string `json:"nombre"`
-	FechaNacimiento string `json:"fecha_nacimiento"`
-	Email           string `json:"email"`
-	Telefono        string `json:"telefono"`
-	Especialidad    string `json:"especialidad"`
+	Nombre       string `json:"nombre"`
+	Apellido     string `json:"apellido"`
+	Especialidad string `json:"especialidad"`
+	Email        string `json:"email"`
+	Telefono     string `json:"telefono"`
 }

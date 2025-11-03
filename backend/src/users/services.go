@@ -3,11 +3,34 @@ package users
 import (
 	"fmt"
 	"uhospital/backend/src/db"
+	"uhospital/backend/src/utilities"
 )
 
 func LoginUser(username, password string) bool {
-	// Lógica de autenticación (simulada)
-	return username == "admin" && password == "password"
+	query := "SELECT password FROM usuario WHERE email = ?"
+	row := db.QueryRow(query, username)
+
+	var hashedPassword string
+	err := row.Scan(&hashedPassword)
+	if err != nil {
+		fmt.Printf("Error retrieving user: %v\n", err)
+		return false
+	}
+
+	return utilities.CheckPasswordHash(password, hashedPassword)
+}
+
+func GetUserByEmail(email string) (*User, error) {
+	query := "SELECT id, email, username, rol FROM usuario WHERE email = ?"
+	row := db.QueryRow(query, email)
+
+	var user User
+	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.Role)
+	if err != nil {
+		fmt.Printf("Error retrieving user by email: %v\n", err)
+		return nil, err
+	}
+	return &user, nil
 }
 
 func RegisterUser(user *User) error {

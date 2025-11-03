@@ -43,3 +43,7 @@ func Exec(query string, args ...interface{}) (sql.Result, error) {
 func Query(query string, args ...interface{}) (*sql.Rows, error) {
 	return DB.Query(query, args...)
 }
+
+func QueryRow(query string, args ...interface{}) *sql.Row {
+	return DB.QueryRow(query, args...)
+}

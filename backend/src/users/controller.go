@@ -2,6 +2,7 @@ package users
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -15,11 +16,29 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	if LoginUser(user.Username, user.Password) {
-		c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
-	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials"})
+	if !LoginUser(user.Email, user.Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
 	}
+
+	u, err := GetUserByEmail(user.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving user"})
+		return
+	}
+
+	token, exp, err := utilities.GenerateJWT(u.ID, u.Username, u.Email, u.Role, 24*time.Hour)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"token":      token,
+		"token_type": "Bearer",
+		"expires_at": exp,
+		"role":       u.Role,
+	})
 }
 
 func registerUserWithRole(c *gin.Context, user *User, registerRole func() error) {

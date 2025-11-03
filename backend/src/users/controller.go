@@ -41,5 +41,18 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 
+	if user.Role == "administrador" {
+		admin := Administrador{
+			Nombre:   user.Username, // Assuming username as nombre for simplicity
+			Apellido: "Apellido",    // Placeholder
+			Telefono: "0000000000",  // Placeholder
+			Email:    user.Email,
+		}
+		if err := RegisterAdministrador(&admin); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register administrador"})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "Registration successful"})
 }

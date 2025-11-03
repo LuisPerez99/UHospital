@@ -35,3 +35,11 @@ func Close() error {
 	}
 	return nil
 }
+
+func Exec(query string, args ...interface{}) (sql.Result, error) {
+	return DB.Exec(query, args...)
+}
+
+func Query(query string, args ...interface{}) (*sql.Rows, error) {
+	return DB.Query(query, args...)
+}

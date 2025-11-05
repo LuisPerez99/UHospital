@@ -10,7 +10,10 @@ import (
 )
 
 func LoginHandler(c *gin.Context) {
-	var user User
+	var user struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -38,6 +41,7 @@ func LoginHandler(c *gin.Context) {
 		"token_type": "Bearer",
 		"expires_at": exp,
 		"role":       u.Role,
+		"email":      u.Email,
 	})
 }
 

@@ -1,30 +1,42 @@
 import { Link } from "react-router"
+import { useConfig } from "../contexts/ConfigContext"
 
 export function LoginForm() {
-    const HOST = import.meta.env.VITE_BACKEND_HOST || "localhost"
-    const PORT = import.meta.env.VITE_BACKEND_PORT || "8080"
+    const { baseURL } = useConfig()
 
-    const handleLogin = (event: React.FormEvent) => {
+    const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault()
         
         try {
-            fetch(`http://${HOST}:${PORT}/api/users/login`, {
+            const response = await fetch(`${baseURL}/users/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    username: (document.getElementById("username") as HTMLInputElement).value,
+                    email: (document.getElementById("email") as HTMLInputElement).value,
                     password: (document.getElementById("password") as HTMLInputElement).value,
                 }),
             })
-            .then((response) => {
-                if (response.ok) {
-                    alert("Inicio de sesión exitoso")
-                } else {
-                    alert("Error en el inicio de sesión")
-                }
-            })
+            if (response.ok) {
+                alert("Inicio de sesión exitoso")
+                // Guardar el token en el almacenamiento local
+                const data = await response.json()
+                localStorage.setItem("token", data.token)
+                localStorage.setItem("tokenExp", data.expires_at)
+                localStorage.setItem("userRole", data.role)
+                localStorage.setItem("userEmail", data.email)
+                // Redirigir al usuario a la página principal u otra página protegida
+                window.location.href = "/"
+            } else {
+                response.json().then((data) => {
+                    if (data.error) {
+                        alert(`Error en el inicio de sesión: ${data.error}`)
+                    } else {
+                        alert("Error en el inicio de sesión")
+                    }
+                })
+            }
         } catch (error) {
             console.error("Error:", error)
         }
@@ -35,14 +47,14 @@ export function LoginForm() {
             <form className="max-w-md mx-auto mt-8 p-4 border border-gray-300 rounded">
                 <h2 className="text-2xl font-bold mb-4">Iniciar Sesión</h2>
                 <div className="mb-4">
-                    <label className="block text-gray-700 mb-2" htmlFor="username">
-                        Nombre de Usuario
+                    <label className="block text-gray-700 mb-2" htmlFor="email">
+                        Correo Electrónico
                     </label>
                     <input
-                        type="text"
-                        id="username"
+                        type="email"
+                        id="email"
                         className="w-full px-3 py-2 border border-gray-300 rounded"
-                        placeholder="Ingrese su nombre de usuario"
+                        placeholder="Ingrese su correo electrónico"
                     />
                 </div>
                 <div className="mb-4">

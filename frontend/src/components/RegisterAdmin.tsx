@@ -1,7 +1,46 @@
 import { useConfig } from "../contexts/ConfigContext"
+import { useState } from "react"
+import type { User, Admin } from "../models/models"
 
-export function RegisterAdmin() {
+interface RegisterAdminProps {
+    user: User;
+}
+
+export function RegisterAdmin({ user }: RegisterAdminProps) {
     const { baseURL } = useConfig();
+    const [nombre, setNombre] = useState("");
+    const [apellido, setApellido] = useState("");
+    const [telefono, setTelefono] = useState("");
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const admin: Admin = {
+            nombre: nombre,
+            apellido: apellido,
+            email: user.email,
+            telefono: telefono,
+        };
+
+        try {
+            const response = await fetch(`${baseURL}/register/admin`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    user: user,
+                    administrador: admin,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error("Error al registrar administrador");
+            }
+            // Manejar respuesta exitosa
+        } catch (error) {
+            console.error(error);
+            // Manejar error
+        }
+    }
 
     return (
         <>
@@ -14,6 +53,8 @@ export function RegisterAdmin() {
                     id="nombre"
                     className="w-full px-3 py-2 border border-gray-300 rounded"
                     placeholder="Ingrese los nombres del médico"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
                 />
             </div>
             <div className="mb-4">
@@ -25,6 +66,8 @@ export function RegisterAdmin() {
                     id="apellido"
                     className="w-full px-3 py-2 border border-gray-300 rounded"
                     placeholder="Ingrese los apellidos del médico"
+                    value={apellido}
+                    onChange={(e) => setApellido(e.target.value)}
                 />
             </div>
             <div className="mb-4">
@@ -36,11 +79,14 @@ export function RegisterAdmin() {
                     id="telefono"
                     className="w-full px-3 py-2 border border-gray-300 rounded"
                     placeholder="Ingrese el teléfono del médico"
+                    value={telefono}
+                    onChange={(e) => setTelefono(e.target.value)}
                 />
             </div>
             <button
                 type="submit"
                 className="w-full bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"
+                onClick={handleSubmit}
             >
                 Registrar Administrador
             </button>

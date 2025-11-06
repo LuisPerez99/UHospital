@@ -6,9 +6,9 @@ import (
 	"uhospital/backend/src/utilities"
 )
 
-func LoginUser(username, password string) bool {
+func LoginUser(user User) bool {
 	query := "SELECT password FROM usuario WHERE email = ?"
-	row := db.QueryRow(query, username)
+	row := db.QueryRow(query, user.Email)
 
 	var hashedPassword string
 	err := row.Scan(&hashedPassword)
@@ -17,7 +17,7 @@ func LoginUser(username, password string) bool {
 		return false
 	}
 
-	return utilities.CheckPasswordHash(password, hashedPassword)
+	return utilities.CheckPasswordHash(user.Password, hashedPassword)
 }
 
 func GetUserByEmail(email string) (*User, error) {
@@ -33,29 +33,38 @@ func GetUserByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
-func RegisterUser(user *User) error {
-	query := "INSERT INTO usuario (email, password, username, rol) VALUES (?, ?, ?, ?)"
-	_, err := db.Exec(query, user.Email, user.Password, user.Username, user.Role)
+func RegisterAdmin(admin *Administrador, hashedPassword, username string) error {
+	query := "CALL AgregarAdmin(?, ?, ?, ?, ?, ?)"
+	_, err := db.Exec(
+		query,
+		admin.Nombre,
+		admin.Apellido,
+		admin.Telefono,
+		admin.Email,
+		hashedPassword,
+		username,
+	)
 	if err != nil {
-		fmt.Printf("Error registering user: %v\n", err)
+		fmt.Printf("Error registering admin: %v\n", err)
 		return err
 	}
 	return nil
 }
 
-func RegisterAdmin(admin *Administrador) error {
-	query := "INSERT INTO admin (nombre, apellido, telefono, email) VALUES (?, ?, ?, ?)"
-	_, err := db.Exec(query, admin.Nombre, admin.Apellido, admin.Telefono, admin.Email)
-	if err != nil {
-		fmt.Printf("Error registering administrador: %v\n", err)
-		return err
-	}
-	return nil
-}
-
-func RegisterPaciente(paciente *Paciente) error {
-	query := "INSERT INTO paciente (nombre, apellido, email, fecha_nacimiento, genero, telefono, direccion) VALUES (?, ?, ?, ?, ?, ?, ?)"
-	_, err := db.Exec(query, paciente.Nombre, paciente.Apellido, paciente.Email, paciente.FechaNacimiento, paciente.Genero, paciente.Telefono, paciente.Direccion)
+func RegisterPaciente(paciente *Paciente, hashedPassword string, username string) error {
+	query := "CALL AgregarPaciente(?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	_, err := db.Exec(
+		query,
+		paciente.Nombre,
+		paciente.Apellido,
+		paciente.FechaNacimiento,
+		paciente.Genero,
+		paciente.Telefono,
+		paciente.Direccion,
+		paciente.Email,
+		hashedPassword,
+		username,
+	)
 	if err != nil {
 		fmt.Printf("Error registering paciente: %v\n", err)
 		return err
@@ -63,9 +72,18 @@ func RegisterPaciente(paciente *Paciente) error {
 	return nil
 }
 
-func RegisterDoctor(doctor *Doctor) error {
-	query := "INSERT INTO doctor (nombre, apellido, especialidad, email, telefono) VALUES (?, ?, ?, ?, ?)"
-	_, err := db.Exec(query, doctor.Nombre, doctor.Apellido, doctor.Especialidad, doctor.Email, doctor.Telefono)
+func RegisterDoctor(doctor *Doctor, hashedPassword string, username string) error {
+	query := "CALL AgregarDoctor(?, ?, ?, ?, ?, ?, ?)"
+	_, err := db.Exec(
+		query,
+		doctor.Nombre,
+		doctor.Apellido,
+		doctor.Especialidad,
+		doctor.Telefono,
+		doctor.Email,
+		hashedPassword,
+		username,
+	)
 	if err != nil {
 		fmt.Printf("Error registering doctor: %v\n", err)
 		return err

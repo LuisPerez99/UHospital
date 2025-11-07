@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	mysql "github.com/go-sql-driver/mysql"
 )
 
 var DB *sql.DB
@@ -46,4 +46,11 @@ func Query(query string, args ...interface{}) (*sql.Rows, error) {
 
 func QueryRow(query string, args ...interface{}) *sql.Row {
 	return DB.QueryRow(query, args...)
+}
+
+func MySQLErrorCode(err error) uint16 {
+	if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+		return mysqlErr.Number
+	}
+	return 0
 }

@@ -1,6 +1,7 @@
 package users
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -47,19 +48,27 @@ func LoginHandler(c *gin.Context) {
 	})
 }
 
-func registerUserWithRole(c *gin.Context, user *User, roleData interface{}, registerRole func(hashedPassword, username string) error) {
+func registerUserWithRole(c *gin.Context, user *User, roleData interface{}, registerRole func(hashedPassword, username string, rol string) error) {
 	hashedPassword, err := utilities.HashPassword(user.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error hashing password"})
 		return
 	}
 
-	if err := registerRole(hashedPassword, user.Username); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error registering role-specific data"})
+	if err := registerRole(hashedPassword, user.Username, user.Role); err != nil {
+		if errors.Is(err, ErrEmailExists) {
+			c.JSON(http.StatusConflict, gin.H{"error": "Este email ya está registrado"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registrar el usuario"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Registration successful"})
+	c.JSON(http.StatusOK, gin.H{
+		"message":  "Registro exitoso",
+		"username": user.Username,
+		"role":     user.Role,
+	})
 }
 
 func RegisterAdminHandler(c *gin.Context) {
@@ -73,8 +82,8 @@ func RegisterAdminHandler(c *gin.Context) {
 		return
 	}
 
-	registerUserWithRole(c, &reqData.User, &reqData.Administrador, func(hashedPassword, username string) error {
-		return RegisterAdmin(&reqData.Administrador, hashedPassword, username)
+	registerUserWithRole(c, &reqData.User, &reqData.Administrador, func(hashedPassword, username string, rol string) error {
+		return RegisterAdmin(&reqData.Administrador, hashedPassword, username, rol)
 	})
 }
 
@@ -89,8 +98,8 @@ func RegisterPacienteHandler(c *gin.Context) {
 		return
 	}
 
-	registerUserWithRole(c, &reqData.User, &reqData.Paciente, func(hashedPassword, username string) error {
-		return RegisterPaciente(&reqData.Paciente, hashedPassword, username)
+	registerUserWithRole(c, &reqData.User, &reqData.Paciente, func(hashedPassword, username string, rol string) error {
+		return RegisterPaciente(&reqData.Paciente, hashedPassword, username, rol)
 	})
 }
 
@@ -105,7 +114,7 @@ func RegisterDoctorHandler(c *gin.Context) {
 		return
 	}
 
-	registerUserWithRole(c, &reqData.User, &reqData.Doctor, func(hashedPassword, username string) error {
-		return RegisterDoctor(&reqData.Doctor, hashedPassword, username)
+	registerUserWithRole(c, &reqData.User, &reqData.Doctor, func(hashedPassword, username string, rol string) error {
+		return RegisterDoctor(&reqData.Doctor, hashedPassword, username, rol)
 	})
 }

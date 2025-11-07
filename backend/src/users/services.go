@@ -6,6 +6,8 @@ import (
 	"uhospital/backend/src/utilities"
 )
 
+var ErrEmailExists = fmt.Errorf("email ya registrado")
+
 func LoginUser(user User) bool {
 	query := "SELECT password FROM usuario WHERE email = ?"
 	row := db.QueryRow(query, user.Email)
@@ -33,8 +35,8 @@ func GetUserByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
-func RegisterAdmin(admin *Administrador, hashedPassword, username string) error {
-	query := "CALL AgregarAdmin(?, ?, ?, ?, ?, ?)"
+func RegisterAdmin(admin *Administrador, hashedPassword, username string, rol string) error {
+	query := "CALL AgregarAdmin(?, ?, ?, ?, ?, ?, ?)"
 	_, err := db.Exec(
 		query,
 		admin.Nombre,
@@ -43,16 +45,21 @@ func RegisterAdmin(admin *Administrador, hashedPassword, username string) error 
 		admin.Email,
 		hashedPassword,
 		username,
+		rol,
 	)
 	if err != nil {
-		fmt.Printf("Error registering admin: %v\n", err)
+		if db.MySQLErrorCode(err) == 1062 {
+			return ErrEmailExists
+		}
+		fmt.Printf("Error al registrar el administrador: %v\n", err)
 		return err
 	}
 	return nil
 }
 
-func RegisterPaciente(paciente *Paciente, hashedPassword string, username string) error {
-	query := "CALL AgregarPaciente(?, ?, ?, ?, ?, ?, ?, ?, ?)"
+func RegisterPaciente(paciente *Paciente, hashedPassword string, username string, rol string) error {
+	fmt.Println("Rol: ", rol)
+	query := "CALL AgregarPaciente(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	_, err := db.Exec(
 		query,
 		paciente.Nombre,
@@ -64,16 +71,20 @@ func RegisterPaciente(paciente *Paciente, hashedPassword string, username string
 		paciente.Email,
 		hashedPassword,
 		username,
+		rol,
 	)
 	if err != nil {
-		fmt.Printf("Error registering paciente: %v\n", err)
+		if db.MySQLErrorCode(err) == 1062 {
+			return ErrEmailExists
+		}
+		fmt.Printf("Error al registrar el paciente: %v\n", err)
 		return err
 	}
 	return nil
 }
 
-func RegisterDoctor(doctor *Doctor, hashedPassword string, username string) error {
-	query := "CALL AgregarDoctor(?, ?, ?, ?, ?, ?, ?)"
+func RegisterDoctor(doctor *Doctor, hashedPassword string, username string, rol string) error {
+	query := "CALL AgregarDoctor(?, ?, ?, ?, ?, ?, ?, ?)"
 	_, err := db.Exec(
 		query,
 		doctor.Nombre,
@@ -83,9 +94,13 @@ func RegisterDoctor(doctor *Doctor, hashedPassword string, username string) erro
 		doctor.Email,
 		hashedPassword,
 		username,
+		rol,
 	)
 	if err != nil {
-		fmt.Printf("Error registering doctor: %v\n", err)
+		if db.MySQLErrorCode(err) == 1062 {
+			return ErrEmailExists
+		}
+		fmt.Printf("Error al registrar el doctor: %v\n", err)
 		return err
 	}
 	return nil

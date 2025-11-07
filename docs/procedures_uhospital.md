@@ -26,9 +26,10 @@ Parámetros:
 - p_email: VARCHAR(100) (único en `usuario`)
 - p_password: VARCHAR(255)
 - p_username: VARCHAR(50)
+- p_rol: 'PACIENTE' (implícito en el procedimiento)
 
 Ejemplo:
-CALL AgregarPaciente('Ana', 'González', '1990-04-12', 'F', '55512345', 'Av. Siempre Viva 123', 'ana@example.com', 's3cret', 'ana_g');
+CALL AgregarPaciente('Ana', 'González', '1990-04-12', 'F', '55512345', 'Av. Siempre Viva 123', 'ana@example.com', 's3cret', 'ana_g', p_rol);
 
 Notas:
 - Si `p_email` ya existe en `usuario` fallará por la restricción UNIQUE.
@@ -108,9 +109,10 @@ Parámetros:
 - p_email: VARCHAR(100) (único en `usuario`)
 - p_password: VARCHAR(255)
 - p_username: VARCHAR(50)
+- p_rol: 'DOCTOR' (implícito en el procedimiento)
 
 Ejemplo:
-CALL AgregarDoctor('Juan', 'Pérez', 'Cardiología', '55598765', 'juan.perez@example.com', 'pass123', 'dr_juan');
+CALL AgregarDoctor('Juan', 'Pérez', 'Cardiología', '55598765', 'juan.perez@example.com', 'pass123', 'dr_juan', p_rol);
 
 ---
 
@@ -147,9 +149,10 @@ Parámetros:
 - p_email: VARCHAR(100)
 - p_password: VARCHAR(255)
 - p_username: VARCHAR(50)
+- p_rol: 'ADMINISTRADOR' (implícito en el procedimiento)
 
 Ejemplo:
-CALL AgregarAdmin('Carla', 'Santos', '55500011', 'carla@example.com', 'adminpass', 'carla_admin');
+CALL AgregarAdmin('Carla', 'Santos', '55500011', 'carla@example.com', 'adminpass', 'carla_admin', p_rol);
 
 ---
 

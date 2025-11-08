@@ -9,6 +9,7 @@ type User struct {
 }
 
 type Administrador struct {
+	ID       int    `json:"id"`
 	Nombre   string `json:"nombre"`
 	Apellido string `json:"apellido"`
 	Telefono string `json:"telefono"`
@@ -16,6 +17,7 @@ type Administrador struct {
 }
 
 type Paciente struct {
+	ID              int    `json:"id"`
 	Nombre          string `json:"nombre"`
 	Apellido        string `json:"apellido"`
 	Email           string `json:"email"`
@@ -26,6 +28,7 @@ type Paciente struct {
 }
 
 type Doctor struct {
+	ID           int    `json:"id"`
 	Nombre       string `json:"nombre"`
 	Apellido     string `json:"apellido"`
 	Especialidad string `json:"especialidad"`

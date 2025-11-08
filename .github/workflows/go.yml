@@ -25,7 +25,7 @@ jobs:
  #     run: go mod download
 
     - name: Build
-      run: go build -v ./backend/src
+      run: go build -v ./backend
 
    # - name: Test
     #  run: go test -v ./...

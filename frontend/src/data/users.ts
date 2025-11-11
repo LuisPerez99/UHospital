@@ -97,14 +97,18 @@ export const doctors: Doctor[] = [
         apellido: 'Ramírez',
         especialidad: 'Cardiología',
         email: 'doctor1@example.com',
-        telefono: '222333444'
+        fecha_nacimiento: '1980-05-15',
+        telefono: '222333444',
+        direccion: 'Calle Salud 123'
     },
     {
         nombre: 'Dra. Sofía',
         apellido: 'Fernández',
         especialidad: 'Pediatría',
         email: 'doctor2@example.com',
-        telefono: '333444555'
+        telefono: '333444555',
+        fecha_nacimiento: '1985-08-20',
+        direccion: 'Avenida Niños 456'
     }
 ];
 
@@ -113,6 +117,8 @@ export const admins: Admin[] = [
         nombre: 'Luis',
         apellido: 'Pérez',
         email: 'admin@example.com',
-        telefono: '111222333'
+        telefono: '111222333',
+        fecha_nacimiento: '1975-07-10',
+        direccion: 'Calle Admin 789'
     }
 ];

@@ -22,6 +22,8 @@ export interface Doctor {
   especialidad: string;
   email: string;
   telefono: string;
+  fecha_nacimiento: string;
+  direccion: string;
 }
 
 export interface Admin {
@@ -29,4 +31,6 @@ export interface Admin {
   apellido: string;
   email: string;
   telefono: string;
+  fecha_nacimiento: string;
+  direccion: string;
 }

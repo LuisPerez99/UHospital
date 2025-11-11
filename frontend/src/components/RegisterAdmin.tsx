@@ -1,9 +1,16 @@
-import { useConfig } from "../contexts/ConfigContext";
+// import { useConfig } from "../contexts/ConfigContext";
 import { useState } from "react";
 import type { User, Admin } from "../models/models";
+import { users, admins } from "../data/users";
 
 interface RegisterAdminProps {
-  user: User;
+  username: string;
+  onUsernameChange: (username: string) => void;
+  email: string;
+  onEmailChange: (email: string) => void;
+  password: string;
+  onPasswordChange: (password: string) => void;
+  onConfirmPasswordChange: (confirmPassword: string) => void;
   confirmPassword: string;
   emailError?: boolean;
   passwordError?: boolean;
@@ -12,14 +19,20 @@ interface RegisterAdminProps {
 }
 
 export function RegisterAdmin({
-  user,
+  username,
+  onUsernameChange,
+  email,
+  onEmailChange,
+  password,
+  onPasswordChange,
   confirmPassword,
+  onConfirmPasswordChange,
   emailError,
   passwordError,
   onEmailError,
   onPasswordError,
 }: RegisterAdminProps) {
-  const { baseURL } = useConfig();
+  // const { baseURL } = useConfig();
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [telefono, setTelefono] = useState("");
@@ -30,12 +43,21 @@ export function RegisterAdmin({
     setErrorMessage("");
     onEmailError?.(false);
     onPasswordError?.(false);
+    
+    const user: User = {
+      id: users.length + 1,
+      username: username,
+      email: email,
+      password: password,
+      role: "ADMIN",
+    };
 
-    if (user.password !== confirmPassword) {
+    if (password !== confirmPassword) {
       setErrorMessage("Las contraseñas no coinciden");
       onPasswordError?.(true);
       return;
     }
+
 
     const admin: Admin = {
       nombre: nombre,
@@ -45,28 +67,38 @@ export function RegisterAdmin({
     };
 
     try {
-      const response = await fetch(`${baseURL}/users/register/admin`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: user,
-          administrador: admin,
-        }),
-      });
-      if (response.status === 409) {
-        setErrorMessage("El correo electrónico ya está en uso");
+      const existingUser = users.find((u) => u.email === user.email);
+      if (existingUser) {
+        setErrorMessage("El correo electrónico ya está registrado");
         onEmailError?.(true);
         return;
       }
-      if (!response.ok) {
-        throw new Error("Error al registrar administrador");
-      }
-      // Manejar respuesta exitosa
-      const data = await response.json();
-      alert(`Administrador ${data.username} registrado exitosamente`);
-      window.location.reload();
+
+      users.push({
+        id: users.length + 1,
+        username: user.username,
+        email: user.email,
+        password: user.password,
+        role: "ADMIN",
+      });
+
+      admins.push(admin);
+
+      alert("Administrador registrado exitosamente");
+      
+      setNombre("");
+      setApellido("");
+      setTelefono("");
+      setErrorMessage("");
+      onEmailError?.(false);
+      onPasswordError?.(false);
+      onUsernameChange("");
+      onEmailChange("");
+      onPasswordChange("");
+      onConfirmPasswordChange("");
+      admins.forEach(admin => {
+        console.log(`Administrador: ${admin.nombre} ${admin.apellido}, Email: ${admin.email}, Teléfono: ${admin.telefono}`);
+      });
     } catch (error) {
       console.error(error);
       setErrorMessage("Ocurrió un error inespaerado. Intente nuevamente");

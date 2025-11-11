@@ -15,6 +15,7 @@ export function SPPaciente() {
                     Mi Perfil
                 </Link>
             </nav>
+            <Outlet />
         </div>
     )
 }

@@ -15,6 +15,7 @@ export function SPDoctor() {
                     Mi Perfil
                 </Link>
             </nav>
+            <Outlet />
         </div>
     )
 }

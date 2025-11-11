@@ -1,51 +1,45 @@
-import { Link } from "react-router";
-import { useConfig } from "../contexts/ConfigContext";
+import { Link, useNavigate } from "react-router";
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import type { User } from "../models/models";
+import { users } from "../data/users";
+import { useAuth } from "../contexts/AuthContext";
 
 export function LoginForm() {
-  const { baseURL } = useConfig();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { login, user } = useAuth();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
-      const response = await fetch(`${baseURL}/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-      if (response.ok) {
-        alert("Inicio de sesión exitoso");
-        // Guardar el token en el almacenamiento local
-        const data = await response.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("tokenExp", data.expires_at);
-        localStorage.setItem("userRole", data.role);
-        localStorage.setItem("userEmail", data.email);
-        // Redirigir al usuario a la página principal u otra página protegida
-        window.location.href = "/";
+      const user = users.find(
+        (u) => u.email === email && u.password === password
+      );
+      if (user) {
+        const saveUser: User = {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          password: "",
+          role: user.role,
+        };
+        login(saveUser);
+        navigate("/", { replace: true });
       } else {
-        response.json().then((data) => {
-          if (data.error) {
-            alert(`Error en el inicio de sesión: ${data.error}`);
-          } else {
-            alert("Error en el inicio de sesión");
-          }
-        });
+        alert("Credenciales inválidas. Por favor, inténtelo de nuevo.");
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
+  useEffect(() => {
+    if (user) navigate("/", { replace: true });
+  }, [user, navigate]);
 
   return (
     <>

@@ -1,10 +1,17 @@
-import { useConfig } from "../contexts/ConfigContext";
+// import { useConfig } from "../contexts/ConfigContext";
 import { useState } from "react";
 import type { User, Doctor } from "../models/models";
+import { users, doctors } from "../data/users";
 
 interface RegisterDoctorProps {
-  user: User;
+  username: string;
+  onUsernameChange: (username: string) => void;
+  email: string;
+  onEmailChange: (email: string) => void;
+  password: string;
+  onPasswordChange: (password: string) => void;
   confirmPassword: string;
+  onConfirmPasswordChange: (confirmPassword: string) => void;
   emailError?: boolean;
   passwordError?: boolean;
   onEmailError?: (hasError: boolean) => void;
@@ -12,14 +19,20 @@ interface RegisterDoctorProps {
 }
 
 export function RegisterDoctor({
-  user,
+  username,
+  onUsernameChange,
+  email,
+  onEmailChange,
+  password,
+  onPasswordChange,
   confirmPassword,
+  onConfirmPasswordChange,
   emailError,
   passwordError,
   onEmailError,
   onPasswordError,
 }: RegisterDoctorProps) {
-  const { baseURL } = useConfig();
+  // const { baseURL } = useConfig();
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [especialidad, setEspecialidad] = useState("");
@@ -31,6 +44,14 @@ export function RegisterDoctor({
     setErrorMessage("");
     onEmailError?.(false);
     onPasswordError?.(false);
+
+    const user: User = {
+      id: users.length + 1,
+      username: username,
+      email: email,
+      password: password,
+      role: "DOCTOR",
+    };
 
     if (user.password !== confirmPassword) {
       setErrorMessage("Las contraseñas no coinciden");
@@ -47,30 +68,36 @@ export function RegisterDoctor({
     };
 
     try {
-      const response = await fetch(`${baseURL}/users/register/doctor`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: user,
-          doctor: doctor,
-        }),
-      });
-      if (response.status === 409) {
-        setErrorMessage("El correo electrónico ya está en uso");
+      const existingUser = users.find((u) => u.email === user.email);
+      if (existingUser) {
+        setErrorMessage("El correo electrónico ya está registrado");
         onEmailError?.(true);
         return;
       }
 
-      if (!response.ok) {
-        throw new Error("Error en el registro del médico");
-      }
+      users.push(user);
+      doctors.push(doctor);
 
-      // Manejar respuesta exitosa
-      const data = await response.json();
-      alert(`Médico ${data.username} registrado exitosamente`);
-      window.location.reload();
+      alert("Médico registrado exitosamente");
+      
+      onUsernameChange("");
+      onEmailChange("");
+      onPasswordChange("");
+      
+      setNombre("");
+      setApellido("");
+      setEspecialidad("");
+      setTelefono("");
+      setErrorMessage("");
+      onEmailError?.(false);
+      onPasswordError?.(false);
+      onConfirmPasswordChange("");
+
+      doctors.forEach(doctor => {
+        // print doctor info to console
+        console.log(`Doctor: ${doctor.nombre} ${doctor.apellido}, Especialidad: ${doctor.especialidad}, Email: ${doctor.email}, Teléfono: ${doctor.telefono}`);
+      });
+
     } catch (error) {
       console.error(error);
       setErrorMessage("Ocurrió un error inesperado. Intente nuevamente");

@@ -1,10 +1,18 @@
-import { useConfig } from "../contexts/ConfigContext";
+// import { useConfig } from "../contexts/ConfigContext";
 import type { User, Paciente } from "../models/models";
 import { useState } from "react";
+import { users, pacientes } from "../data/users";
+import { useNavigate } from "react-router";
 
 interface RegisterPacienteProps {
-  user: User;
+  username: string;
+  onUsernameChange: (username: string) => void;
+  email: string;
+  onEmailChange: (email: string) => void;
+  password: string;
+  onPasswordChange: (password: string) => void;
   confirmPassword: string;
+  onConfirmPasswordChange: (confirmPassword: string) => void;
   emailError?: boolean;
   passwordError?: boolean;
   onEmailError?: (hasError: boolean) => void;
@@ -12,14 +20,20 @@ interface RegisterPacienteProps {
 }
 
 export function RegisterPaciente({
-  user,
+  username,
+  onUsernameChange,
+  email,
+  onEmailChange,
+  password,
+  onPasswordChange,
   confirmPassword,
+  onConfirmPasswordChange,
   emailError,
   passwordError,
   onEmailError,
   onPasswordError,
 }: RegisterPacienteProps) {
-  const { baseURL } = useConfig();
+  // const { baseURL } = useConfig();
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
@@ -27,12 +41,21 @@ export function RegisterPaciente({
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
     onEmailError?.(false);
     onPasswordError?.(false);
+
+    const user: User = {
+      id: 0,
+      username: username,
+      email: email,
+      password: password,
+      role: "",
+    };
 
     if (user.password !== confirmPassword) {
       setErrorMessage("Las contraseñas no coinciden");
@@ -52,33 +75,43 @@ export function RegisterPaciente({
     };
 
     try {
-      const response = await fetch(`${baseURL}/users/register/paciente`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: user,
-          paciente: paciente,
-        }),
-      });
-
-      if (response.status === 409) {
-        setErrorMessage("El correo electrónico ya está en uso");
+      const existingUser = users.find((u) => u.email === user.email);
+      if (existingUser) {
+        setErrorMessage("El correo electrónico ya está registrado");
         onEmailError?.(true);
         return;
       }
 
-      if (!response.ok) {
-        throw new Error("Error en el registro del paciente");
-      }
+      users.push({
+        id: users.length + 1,
+        username: user.username,
+        email: user.email,
+        password: user.password,
+        role: "PACIENTE",
+      });
 
-      // Manejar respuesta exitosa
-      const data = await response.json();
-      alert(
-        `Paciente ${data.username} registrado exitosamente, redirigiendo a la página de login`
-      );
-      window.location.href = "/login";
+      pacientes.push(paciente);
+
+      alert(`Paciente ${user.username} registrado exitosamente, redireccionando a la página de login...`);
+
+      setNombre("");
+      setApellido("");
+      setFechaNacimiento("");
+      setGenero("M");
+      setTelefono("");
+      setDireccion("");
+      setErrorMessage("");
+      onEmailError?.(false);
+      onPasswordError?.(false);
+      onUsernameChange("");
+      onEmailChange("");
+      onPasswordChange("");
+      onConfirmPasswordChange("");
+
+      pacientes.forEach(paciente => {
+        console.log(`Paciente: ${paciente.nombre} ${paciente.apellido}, Email: ${paciente.email}, Teléfono: ${paciente.telefono}`);
+      });
+      navigate("/login", { replace: true });
     } catch (error) {
       console.error(error);
       setErrorMessage("Ocurrió un error inespaerado. Intente nuevamente");

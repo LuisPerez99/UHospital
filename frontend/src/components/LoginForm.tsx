@@ -28,7 +28,6 @@ export function LoginForm() {
           role: user.role,
         };
         login(saveUser);
-        navigate("/", { replace: true });
       } else {
         alert("Credenciales inválidas. Por favor, inténtelo de nuevo.");
       }
@@ -38,7 +37,7 @@ export function LoginForm() {
   };
 
   useEffect(() => {
-    if (user) navigate("/", { replace: true });
+    if (user) navigate("/dashboard", { replace: true });
   }, [user, navigate]);
 
   return (

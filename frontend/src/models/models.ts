@@ -23,6 +23,7 @@ export interface Doctor {
   email: string;
   telefono: string;
   fecha_nacimiento: string;
+  genero: string;
   direccion: string;
 }
 
@@ -32,5 +33,6 @@ export interface Admin {
   email: string;
   telefono: string;
   fecha_nacimiento: string;
+  genero: string;
   direccion: string;
 }

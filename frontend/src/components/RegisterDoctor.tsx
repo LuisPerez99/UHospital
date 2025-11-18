@@ -39,6 +39,7 @@ export function RegisterDoctor({
   const [telefono, setTelefono] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [direccion, setDireccion] = useState("");
+  const [genero, setGenero] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,6 +70,7 @@ export function RegisterDoctor({
       telefono: telefono,
       fecha_nacimiento: fechaNacimiento,
       direccion: direccion,
+      genero: genero,
     };
 
     try {
@@ -175,6 +177,21 @@ export function RegisterDoctor({
           value={fechaNacimiento}
           onChange={(e) => setFechaNacimiento(e.target.value)}
         />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 mb-2" htmlFor="genero">
+          <select
+            id="genero"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+            value={genero}
+            onChange={(e) => setGenero(e.target.value)}
+          >
+            <option value="">Seleccione el género</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </label>
       </div>
       <div className="mb-4">
         <label className="block text-gray-700 mb-2" htmlFor="direccion">

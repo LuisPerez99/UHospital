@@ -5,14 +5,10 @@ import { Home } from "./pages/Home";
 import { Register } from "./pages/Register";
 import { Route, Routes } from "react-router";
 import { ConfigProvider } from "./contexts/ConfigContext";
-import { Dashboard } from "./pages/Dashboard";
 import { UserManagement } from "./components/admin-dashboard/UserManagement";
-import { PatientsList } from "./components/admin-dashboard/PatientsList";
-import { DoctorsList } from "./components/admin-dashboard/DoctorsList";
-import { AdminsList } from "./components/admin-dashboard/AdminsList";
-// Lazy-load dashboard panels to reduce initial bundle size
-const SPAdmin = React.lazy(() =>
-  import("./components/SPAdmin").then((m) => ({ default: m.SPAdmin }))
+
+const AdminDashboard = React.lazy(() =>
+  import("./pages/AdminDashboard").then((m) => ({ default: m.AdminDashboard }))
 );
 const SPPaciente = React.lazy(() =>
   import("./components/SPPaciente").then((m) => ({ default: m.SPPaciente }))
@@ -40,30 +36,24 @@ export function App() {
               </div>
             }
           />
-          <Route path="/dashboard" element={<Dashboard />}>
+          <Route path="/dashboard">
             <Route
-              path="admin/*"
+              path="admin"
               element={
                 <React.Suspense
                   fallback={<div>Cargando panel de administrador...</div>}
                 >
-                  <SPAdmin />
+                  <AdminDashboard />
                 </React.Suspense>
               }
             >
-              <Route path="user-management" element={<UserManagement />}>
-                <Route path="pacientes" element={<PatientsList />} />
-                <Route path="doctors" element={<DoctorsList />} />
-                <Route path="admins" element={<AdminsList />} />
-                <Route
-                  index
-                  element={
-                    <div className="p-4">
-                      Seleccione una categoría de usuario
-                    </div>
-                  }
-                />
-              </Route>
+              <Route path="user-management" element={<UserManagement />} />
+              <Route path="system-settings" element={
+                <div className="p-4">Configuración del sistema (en construcción)</div>
+              } />
+              <Route path="reports" element={
+                <div className="p-4">Reportes (en construcción)</div>
+              } />
               <Route
                 index
                 element={

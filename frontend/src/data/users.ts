@@ -20,14 +20,14 @@ export const users: User[] = [
         username: 'patient1',
         email: 'patient1@example.com',
         password: 'patientpassword',
-        role: 'PATIENT'
+        role: 'PACIENTE'
     },
     {
         id: 4,
         username: 'patient2',
         email: 'patient2@example.com',
         password: 'patientpassword2',
-        role: 'PATIENT'
+        role: 'PACIENTE'
     },
     {
         id: 5,
@@ -41,14 +41,14 @@ export const users: User[] = [
         username: 'patient3',
         email: 'patient3@example.com',
         password: 'patientpassword3',
-        role: 'PATIENT'
+        role: 'PACIENTE'
     },
     {
         id: 7,
         username: 'patient4',
         email: 'patient4@example.com',
         password: 'patientpassword4',
-        role: 'PATIENT'
+        role: 'PACIENTE'
     }
 ];
 

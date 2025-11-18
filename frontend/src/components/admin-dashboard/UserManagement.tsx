@@ -1,7 +1,8 @@
 import { useState } from "react";
-
+import { BsPencilFill, BsTrashFill, BsEyeFill } from "react-icons/bs";
 import type { User } from "../../models/models";
 import { users } from "../../data/users";
+import { EditUserModal } from "./EditUserModal";
 
 export function UserManagement() {
   const [filter, setFilter] = useState("all");
@@ -36,25 +37,70 @@ export function UserManagement() {
           </select>
         </div>
       </div>
-      {/* Renderizar lista de usuarios */}
+      {/* Renderizar lista de usuarios como tabla */}
       <div className="flex-1 p-4 bg-white rounded-lg shadow-md">
         <h3 className="text-xl font-bold mb-4">Lista de Usuarios</h3>
-        <ul>
-          {filteredUsers.map((user: User) => (
-            <li key={user.id} className="mb-2 p-2 border-b border-gray-300">
-              <p>
-                <strong>Nombre de Usuario:</strong> {user.username}
-              </p>
-              <p>
-                <strong>Correo Electrónico:</strong> {user.email}
-              </p>
-              <p>
-                <strong>Rol:</strong> {user.role.toLowerCase()}
-              </p>
-            </li>
-          ))}
-        </ul>
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th className="border border-gray-300 bg-gray-200 px-4 py-2">
+                ID
+              </th>
+              <th className="border border-gray-300 bg-gray-200 px-4 py-2">
+                Nombre de Usuario
+              </th>
+              <th className="border border-gray-300 bg-gray-200 px-4 py-2">
+                Correo Electrónico
+              </th>
+              <th className="border border-gray-300 bg-gray-200 px-4 py-2">
+                Rol
+              </th>
+              <th className="border border-gray-300 bg-gray-200 px-4 py-2 text-center">
+                Acciones
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredUsers.map((user: User) => (
+              <tr key={user.id}>
+                <td className="border border-gray-300 px-4 py-2">{user.id}</td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {user.username}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {user.email}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {user.role}
+                </td>
+                <td className="border border-gray-300 px-4 py-2 text-center align-middle">
+                  <div className="inline-flex items-center gap-2">
+                    <button
+                      className="text-white bg-green-500 hover:bg-green-600 p-2"
+                      title="Editar Usuario"
+                    >
+                      <BsPencilFill />
+                    </button>
+                    <button
+                      className="text-white bg-red-500 hover:bg-red-600 p-2"
+                      title="Eliminar Usuario"
+                    >
+                      <BsTrashFill />
+                    </button>
+                    <button
+                      className="text-white bg-blue-500 hover:bg-blue-600 p-2"
+                      title="Ver Usuario"
+                    >
+                      <BsEyeFill />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
 }
+

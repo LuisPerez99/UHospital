@@ -36,6 +36,8 @@ export function RegisterAdmin({
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [fechaNacimiento, setFechaNacimiento] = useState("");
+  const [direccion, setDireccion] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,6 +66,8 @@ export function RegisterAdmin({
       apellido: apellido,
       email: user.email,
       telefono: telefono,
+      fecha_nacimiento: fechaNacimiento,
+      direccion: direccion,
     };
 
     try {
@@ -144,6 +148,31 @@ export function RegisterAdmin({
             placeholder="Ingrese el teléfono del administrador"
             value={telefono}
             onChange={(e) => setTelefono(e.target.value)}
+            />
+        </div>
+        <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="fecha_nacimiento">
+            Fecha de Nacimiento
+            </label>
+            <input
+            type="date"
+            id="fecha_nacimiento"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+            value={fechaNacimiento}
+            onChange={(e) => setFechaNacimiento(e.target.value)}
+            />
+        </div>
+        <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="direccion">
+            Dirección
+            </label>
+            <input
+            type="text"
+            id="direccion"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+            placeholder="Ingrese la dirección del administrador"
+            value={direccion}
+            onChange={(e) => setDireccion(e.target.value)}
             />
         </div>
         {errorMessage && (

@@ -17,6 +17,7 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
   const [especialidad, setEspecialidad] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setUsername(user.username ?? "");
@@ -27,7 +28,16 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
     setTelefono((user as any).telefono ?? "");
     setDireccion((user as any).direccion ?? "");
     setEspecialidad((user as any).especialidad ?? "");
+
+    // mostrar transición después de montar
+    setTimeout(() => setIsVisible(true), 10);
   }, [user]);
+
+  const handleClose = () => {
+    // ocultar con transición
+    setIsVisible(false);
+    setTimeout(() => onClose(), 300);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,15 +58,20 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 sm:items-start sm:pt-10 transition-opacity duration-300 ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
       role="dialog"
+      style={{ backgroundColor: "rgba(0,0,0,0.5" }}
       aria-modal="true"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <form
-        className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md"
+        className={`max-w-md max-h-full mx-auto bg-white p-6 rounded-lg shadow-md overflow-y-auto transition-all duration-300 ${
+          isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
+        }`}
         onSubmit={handleSubmit}
       >
         <h2 className="text-2xl font-bold mb-4">Editar Usuario</h2>
@@ -155,12 +170,21 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             />
           </div>
         )}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"
-        >
-          Guardar Cambios
-        </button>
+        <div className="flex justify-end">
+          <button
+            type="button"
+            className="mr-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+            onClick={onClose}
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Guardar Cambios
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -6,6 +6,8 @@ import { EditUserModal } from "./EditUserModal";
 
 export function UserManagement() {
   const [filter, setFilter] = useState("all");
+  const [data, setData] = useState<User[]>(users);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilter(e.target.value);
@@ -15,6 +17,13 @@ export function UserManagement() {
     filter === "all"
       ? users
       : users.filter((user) => user.role.toLowerCase() === filter);
+
+  const handleSaveUser = (updated: User) => {
+    setData((prev) =>
+      prev.map((user) => (user.id === updated.id ? updated : user))
+    );
+    setEditingUser(null);
+  };
 
   return (
     <>
@@ -78,12 +87,16 @@ export function UserManagement() {
                     <button
                       className="text-white bg-green-500 hover:bg-green-600 p-2"
                       title="Editar Usuario"
+                      onClick={() => setEditingUser(user)}
                     >
                       <BsPencilFill />
                     </button>
                     <button
                       className="text-white bg-red-500 hover:bg-red-600 p-2"
                       title="Eliminar Usuario"
+                      onClick={() =>
+                        setData((prev) => prev.filter((u) => u.id !== user.id))
+                      }
                     >
                       <BsTrashFill />
                     </button>
@@ -99,8 +112,15 @@ export function UserManagement() {
             ))}
           </tbody>
         </table>
+
+        {editingUser && (
+          <EditUserModal
+            user={editingUser}
+            onSave={handleSaveUser}
+            onClose={() => setEditingUser(null)}
+          />
+        )}
       </div>
     </>
   );
 }
-

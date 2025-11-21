@@ -1,13 +1,45 @@
 import { useState } from "react";
 import { BsPencilFill, BsTrashFill, BsEyeFill } from "react-icons/bs";
-import type { User } from "../../models/models";
-import { users } from "../../data/users";
+import type {
+  Admin,
+  Doctor,
+  Paciente,
+  User,
+  ExtendedUser,
+} from "../../models/models";
+import { users, pacientes, doctors, admins } from "../../data/users";
 import { EditUserModal } from "./EditUserModal";
+import { ViewUserModal } from "./ViewUserModal";
 
 export function UserManagement() {
   const [filter, setFilter] = useState("all");
   const [data, setData] = useState<User[]>(users);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [pacientesData, setPacientesData] = useState(pacientes);
+  const [doctorsData, setDoctorsData] = useState(doctors);
+  const [adminsData, setAdminsData] = useState(admins);
+  const [editingUser, setEditingUser] = useState<ExtendedUser | null>(null);
+  const [viewingUser, setViewingUser] = useState<User | null>(null);
+
+  const buildExtendedUser = (
+    user: User,
+    admins: Admin[],
+    doctors: Doctor[],
+    pacientes: Paciente[]
+  ): ExtendedUser => {
+    switch (user.role) {
+      case "ADMIN":
+        const admin = admins.find((a) => a.email === user.email);
+        return { ...user, ...(admin || {}) };
+      case "DOCTOR":
+        const doctor = doctors.find((d) => d.email === user.email);
+        return { ...user, ...(doctor || {}) };
+      case "PACIENTE":
+        const paciente = pacientes.find((p) => p.email === user.email);
+        return { ...user, ...(paciente || {}) };
+      default:
+        return user;
+    }
+  };
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilter(e.target.value);
@@ -15,13 +47,73 @@ export function UserManagement() {
 
   const filteredUsers =
     filter === "all"
-      ? users
-      : users.filter((user) => user.role.toLowerCase() === filter);
+      ? data
+      : data.filter((user) => user.role.toLowerCase() === filter);
 
-  const handleSaveUser = (updated: User) => {
+  const handleSaveUser = (updated: ExtendedUser) => {
     setData((prev) =>
-      prev.map((user) => (user.id === updated.id ? updated : user))
+      prev.map((user) =>
+        user.id === updated.id
+          ? { ...user, username: updated.username, email: updated.email }
+          : user
+      )
     );
+
+    switch (updated.role) {
+      case "ADMIN":
+        setAdminsData((prev) =>
+          prev.map((admin) =>
+            admin.email === updated.email
+              ? {
+                  ...admin,
+                  nombre: updated.nombre || "",
+                  apellido: updated.apellido || "",
+                  telefono: updated.telefono || "",
+                  fecha_nacimiento: updated.fechaNacimiento || "",
+                  genero: updated.genero || "",
+                  direccion: updated.direccion || "",
+                }
+              : admin
+          )
+        );
+        break;
+      case "DOCTOR":
+        setDoctorsData((prev) =>
+          prev.map((doctor) =>
+            doctor.email === updated.email
+              ? {
+                  ...doctor,
+                  nombre: updated.nombre || "",
+                  apellido: updated.apellido || "",
+                  especialidad: updated.especialidad || "",
+                  telefono: updated.telefono || "",
+                  fecha_nacimiento: updated.fechaNacimiento || "",
+                  genero: updated.genero || "",
+                  direccion: updated.direccion || "",
+                }
+              : doctor
+          )
+        );
+        break;
+      case "PACIENTE":
+        setPacientesData((prev) =>
+          prev.map((paciente) =>
+            paciente.email === updated.email
+              ? {
+                  ...paciente,
+                  nombre: updated.nombre || "",
+                  apellido: updated.apellido || "",
+                  telefono: updated.telefono || "",
+                  fecha_nacimiento: updated.fechaNacimiento || "",
+                  genero: updated.genero || "",
+                  direccion: updated.direccion || "",
+                }
+              : paciente
+          )
+        );
+        break;
+    }
+
     setEditingUser(null);
   };
 
@@ -87,7 +179,16 @@ export function UserManagement() {
                     <button
                       className="text-white bg-green-500 hover:bg-green-600 p-2"
                       title="Editar Usuario"
-                      onClick={() => setEditingUser(user)}
+                      onClick={() =>
+                        setEditingUser(
+                          buildExtendedUser(
+                            user,
+                            adminsData,
+                            doctorsData,
+                            pacientesData
+                          )
+                        )
+                      }
                     >
                       <BsPencilFill />
                     </button>
@@ -103,6 +204,7 @@ export function UserManagement() {
                     <button
                       className="text-white bg-blue-500 hover:bg-blue-600 p-2"
                       title="Ver Usuario"
+                      onClick={() => setViewingUser(user)}
                     >
                       <BsEyeFill />
                     </button>
@@ -116,8 +218,21 @@ export function UserManagement() {
         {editingUser && (
           <EditUserModal
             user={editingUser}
+            pacientes={pacientesData}
+            doctors={doctorsData}
+            admins={adminsData}
             onSave={handleSaveUser}
             onClose={() => setEditingUser(null)}
+          />
+        )}
+
+        {viewingUser && (
+          <ViewUserModal
+            user={viewingUser}
+            pacientes={pacientesData}
+            doctors={doctorsData}
+            admins={adminsData}
+            onClose={() => setViewingUser(null)}
           />
         )}
       </div>

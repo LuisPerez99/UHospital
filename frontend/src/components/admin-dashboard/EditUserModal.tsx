@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { users } from "../../data/users";
-import type { User, Paciente, Doctor, Admin } from "../../models/models";
+import type { User, Paciente, Doctor, Admin, ExtendedUser } from "../../models/models";
 
 interface EditUserModalProps {
-  user: User;
-  onSave: (updated: User) => void;
+  user: ExtendedUser;
+  pacientes: Paciente[];
+  doctors: Doctor[];
+  admins: Admin[];
+  onSave: (updated: ExtendedUser) => void;
   onClose: () => void;
 }
 
@@ -33,25 +35,51 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
     setTimeout(() => setIsVisible(true), 10);
   }, [user]);
 
-  const handleClose = () => {
-    // ocultar con transición
-    setIsVisible(false);
-    setTimeout(() => onClose(), 300);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const base = { ...user, username };
-    const role = user.role?.toLowerCase?.() ?? user.role;
-    const roleExtras =
-      role === "doctor"
-        ? { especialidad }
-        : role === "paciente"
-        ? { nombre, apellido, fechaNacimiento, genero, telefono, direccion }
-        : {};
-
-    const updated: User = { ...(base as any), ...(roleExtras as any) };
+    let updated: ExtendedUser;
+    switch (user.role) {
+      case "ADMIN":
+        updated = {
+          ...user,
+          username,
+          nombre,
+          apellido,
+          fechaNacimiento,
+          genero,
+          telefono,
+          direccion,
+        };
+        break;
+      case "DOCTOR":
+        updated = {
+          ...user,
+          username,
+          nombre,
+          apellido,
+          fechaNacimiento,
+          genero,
+          telefono,
+          direccion,
+          especialidad,
+        };
+        break;
+      case "PACIENTE":
+        updated = {
+          ...user,
+          username,
+          nombre,
+          apellido,
+          fechaNacimiento,
+          genero,
+          telefono,
+          direccion,
+        };
+        break;
+      default:
+        updated = { ...user, username };
+    }
 
     onSave(updated);
   };
@@ -84,6 +112,8 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             id="username"
             className="w-full px-3 py-2 border border-gray-300 rounded"
             placeholder="Ingrese el nombre de usuario"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div className="mb-4">
@@ -95,6 +125,8 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             id="nombre"
             className="w-full px-3 py-2 border border-gray-300 rounded"
             placeholder="Ingrese el nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
           />
         </div>
         <div className="mb-4">
@@ -106,6 +138,8 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             id="apellido"
             className="w-full px-3 py-2 border border-gray-300 rounded"
             placeholder="Ingrese el apellido"
+            value={apellido}
+            onChange={(e) => setApellido(e.target.value)}
           />
         </div>
         <div className="mb-4">
@@ -119,6 +153,8 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             type="date"
             id="fecha_nacimiento"
             className="w-full px-3 py-2 border border-gray-300 rounded"
+            value={fechaNacimiento}
+            onChange={(e) => setFechaNacimiento(e.target.value)}
           />
         </div>
         <div className="mb-4">
@@ -128,11 +164,13 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
           <select
             id="genero"
             className="w-full px-3 py-2 border border-gray-300 rounded"
+            value={genero}
+            onChange={(e) => setGenero(e.target.value)}
           >
             <option value="">Seleccione el género</option>
-            <option value="male">Masculino</option>
-            <option value="female">Femenino</option>
-            <option value="other">Otro</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
           </select>
         </div>
         <div className="mb-4">
@@ -144,6 +182,8 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             id="telefono"
             className="w-full px-3 py-2 border border-gray-300 rounded"
             placeholder="Ingrese el número de teléfono"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
           />
         </div>
         <div className="mb-4">
@@ -155,6 +195,8 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             id="direccion"
             className="w-full px-3 py-2 border border-gray-300 rounded"
             placeholder="Ingrese la dirección"
+            value={direccion}
+            onChange={(e) => setDireccion(e.target.value)}
           />
         </div>
         {user && user.role.toLowerCase() === "doctor" && (
@@ -167,6 +209,8 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
               id="especialidad"
               className="w-full px-3 py-2 border border-gray-300 rounded"
               placeholder="Ingrese la especialización del doctor"
+              value={especialidad}
+              onChange={(e) => setEspecialidad(e.target.value)}
             />
           </div>
         )}

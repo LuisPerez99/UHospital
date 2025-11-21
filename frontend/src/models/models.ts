@@ -36,3 +36,13 @@ export interface Admin {
   genero: string;
   direccion: string;
 }
+
+export type ExtendedUser = User & {
+  nombre?: string;
+  apellido?: string;
+  fechaNacimiento?: string;
+  genero?: string;
+  telefono?: string;
+  direccion?: string;
+  especialidad?: string;
+};

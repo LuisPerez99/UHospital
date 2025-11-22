@@ -28,7 +28,6 @@ export function LoginForm() {
           role: user.role,
         };
         login(saveUser);
-        navigate("/", { replace: true });
       } else {
         alert("Credenciales inválidas. Por favor, inténtelo de nuevo.");
       }
@@ -38,7 +37,20 @@ export function LoginForm() {
   };
 
   useEffect(() => {
-    if (user) navigate("/", { replace: true });
+    if (user) {
+      if (user.role === "ADMIN") {
+        navigate("/dashboard/admin");
+        return;
+      }
+      if (user.role === "DOCTOR") {
+        navigate("/dashboard/doctor");
+        return;
+      }
+      if (user.role === "PATIENT") {
+        navigate("/dashboard/patient");
+        return;
+      }
+    }
   }, [user, navigate]);
 
   return (

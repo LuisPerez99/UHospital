@@ -20,14 +20,14 @@ export const users: User[] = [
         username: 'patient1',
         email: 'patient1@example.com',
         password: 'patientpassword',
-        role: 'PATIENT'
+        role: 'PACIENTE'
     },
     {
         id: 4,
         username: 'patient2',
         email: 'patient2@example.com',
         password: 'patientpassword2',
-        role: 'PATIENT'
+        role: 'PACIENTE'
     },
     {
         id: 5,
@@ -41,14 +41,14 @@ export const users: User[] = [
         username: 'patient3',
         email: 'patient3@example.com',
         password: 'patientpassword3',
-        role: 'PATIENT'
+        role: 'PACIENTE'
     },
     {
         id: 7,
         username: 'patient4',
         email: 'patient4@example.com',
         password: 'patientpassword4',
-        role: 'PATIENT'
+        role: 'PACIENTE'
     }
 ];
 
@@ -97,14 +97,20 @@ export const doctors: Doctor[] = [
         apellido: 'Ramírez',
         especialidad: 'Cardiología',
         email: 'doctor1@example.com',
-        telefono: '222333444'
+        fecha_nacimiento: '1980-05-15',
+        genero: 'Masculino',
+        telefono: '222333444',
+        direccion: 'Calle Salud 123'
     },
     {
         nombre: 'Dra. Sofía',
         apellido: 'Fernández',
         especialidad: 'Pediatría',
         email: 'doctor2@example.com',
-        telefono: '333444555'
+        fecha_nacimiento: '1985-08-20',
+        genero: 'Femenino',
+        telefono: '333444555',
+        direccion: 'Avenida Niños 456'
     }
 ];
 
@@ -113,6 +119,9 @@ export const admins: Admin[] = [
         nombre: 'Luis',
         apellido: 'Pérez',
         email: 'admin@example.com',
-        telefono: '111222333'
+        telefono: '111222333',
+        fecha_nacimiento: '1975-07-10',
+        genero: 'Masculino',
+        direccion: 'Calle Admin 789'
     }
 ];

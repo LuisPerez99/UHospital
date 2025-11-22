@@ -22,6 +22,9 @@ export interface Doctor {
   especialidad: string;
   email: string;
   telefono: string;
+  fecha_nacimiento: string;
+  genero: string;
+  direccion: string;
 }
 
 export interface Admin {
@@ -29,4 +32,17 @@ export interface Admin {
   apellido: string;
   email: string;
   telefono: string;
+  fecha_nacimiento: string;
+  genero: string;
+  direccion: string;
 }
+
+export type ExtendedUser = User & {
+  nombre?: string;
+  apellido?: string;
+  fechaNacimiento?: string;
+  genero?: string;
+  telefono?: string;
+  direccion?: string;
+  especialidad?: string;
+};

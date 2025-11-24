@@ -2,32 +2,26 @@ import { Link, useNavigate } from "react-router";
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import type { User } from "../models/models";
-import { users } from "../data/users";
 import { useAuth } from "../contexts/AuthContext";
 
-export function LoginForm() {
+interface LoginFormProps {
+  users: User[];
+}
+
+export function LoginForm({ users }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login, user } = useAuth();
+  const { login, user, authenticate } = useAuth();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
-      const user = users.find(
-        (u) => u.email === email && u.password === password
-      );
-      if (user) {
-        const saveUser: User = {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          password: "",
-          role: user.role,
-        };
-        login(saveUser);
+      const foundUser = authenticate(email, password, users);
+      if (foundUser) {
+        login(foundUser);
       } else {
         alert("Credenciales inválidas. Por favor, inténtelo de nuevo.");
       }

@@ -1,9 +1,14 @@
 import { LoginForm } from "../components/LoginForm"
+import type { User } from "../models/models";
 
-export function Login() {
+interface LoginProps {
+    users: User[];
+}
+
+export function Login({ users }: LoginProps) {
     return (
         <div className="p-4">
-            <LoginForm />
+            <LoginForm users={users} />
         </div>
     )
 }

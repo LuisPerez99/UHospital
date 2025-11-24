@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { User, Paciente, Doctor, Admin, ExtendedUser } from "../../models/models";
+import type { Paciente, Doctor, Admin, ExtendedUser } from "../../models/models";
 
 interface EditUserModalProps {
   user: ExtendedUser;

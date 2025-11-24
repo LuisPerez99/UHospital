@@ -10,6 +10,7 @@ import type {
 } from "../../models/models";
 import { EditUserModal } from "./EditUserModal";
 import { ViewUserModal } from "./ViewUserModal";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface UserManagementContext {
   users: User[];
@@ -23,10 +24,21 @@ interface UserManagementContext {
 }
 
 export function UserManagement() {
-  const { users: data, setUsers: setData, pacientes: pacientesData, setPacientes: setPacientesData, doctors: doctorsData, setDoctors: setDoctorsData, admins: adminsData, setAdmins: setAdminsData } = useOutletContext<UserManagementContext>();
+  const {
+    users: data,
+    setUsers: setData,
+    pacientes: pacientesData,
+    setPacientes: setPacientesData,
+    doctors: doctorsData,
+    setDoctors: setDoctorsData,
+    admins: adminsData,
+    setAdmins: setAdminsData,
+  } = useOutletContext<UserManagementContext>();
   const [filter, setFilter] = useState("all");
   const [editingUser, setEditingUser] = useState<ExtendedUser | null>(null);
   const [viewingUser, setViewingUser] = useState<User | null>(null);
+
+  const { user } = useAuth();
 
   const buildExtendedUser = (
     user: User,
@@ -120,6 +132,11 @@ export function UserManagement() {
           )
         );
         break;
+    }
+
+    if (user && user.id === updated.id) {
+      user.username = updated.username;
+      user.email = updated.email;
     }
 
     setEditingUser(null);

@@ -5,6 +5,7 @@ import { Home } from "./pages/Home";
 import { Register } from "./pages/Register";
 import { Route, Routes } from "react-router";
 import { ConfigProvider } from "./contexts/ConfigContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import { UserManagement } from "./components/admin-dashboard/UserManagement";
 import { users as initialUsers, pacientes as initialPacientes, doctors as initialDoctors, admins as initialAdmins } from "./data/users";
 import type { User, Paciente, Doctor, Admin } from "./models/models";
@@ -27,11 +28,12 @@ export function App() {
   const [doctors, setDoctors] = useState<Doctor[]>(initialDoctors);
   const [admins, setAdmins] = useState<Admin[]>(initialAdmins);
   return (
-    <ConfigProvider>
-      <div className="App">
-        <NavBar />
-        <Routes>
-          <Route path="/login" element={<Login />} />
+    <AuthProvider>
+      <ConfigProvider>
+        <div className="App">
+          <NavBar />
+          <Routes>
+            <Route path="/login" element={<Login users={users} />} />
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route
@@ -124,5 +126,6 @@ export function App() {
         </Routes>
       </div>
     </ConfigProvider>
+    </AuthProvider>
   );
 }

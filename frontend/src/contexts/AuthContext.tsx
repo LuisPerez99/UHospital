@@ -5,6 +5,7 @@ type AuthContextType = {
   user: User | null;
   login: (user: User) => void;
   logout: () => void;
+  authenticate: (email: string, password: string, users: User[]) => User | null;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -51,8 +52,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(null);
     };
 
+    const authenticate = (email: string, password: string, users: User[]): User | null => {
+        const foundUser = users.find(
+            (u) => u.email === email && u.password === password
+        );
+        return foundUser || null;
+    };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, authenticate }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavBar } from "./components/NavBar";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
@@ -6,6 +6,8 @@ import { Register } from "./pages/Register";
 import { Route, Routes } from "react-router";
 import { ConfigProvider } from "./contexts/ConfigContext";
 import { UserManagement } from "./components/admin-dashboard/UserManagement";
+import { users as initialUsers, pacientes as initialPacientes, doctors as initialDoctors, admins as initialAdmins } from "./data/users";
+import type { User, Paciente, Doctor, Admin } from "./models/models";
 
 const AdminDashboard = React.lazy(() =>
   import("./pages/AdminDashboard").then((m) => ({ default: m.AdminDashboard }))
@@ -20,6 +22,10 @@ const SPDoctor = React.lazy(() =>
 // import './App.css'
 
 export function App() {
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [pacientes, setPacientes] = useState<Paciente[]>(initialPacientes);
+  const [doctors, setDoctors] = useState<Doctor[]>(initialDoctors);
+  const [admins, setAdmins] = useState<Admin[]>(initialAdmins);
   return (
     <ConfigProvider>
       <div className="App">
@@ -43,7 +49,16 @@ export function App() {
                 <React.Suspense
                   fallback={<div>Cargando panel de administrador...</div>}
                 >
-                  <AdminDashboard />
+                  <AdminDashboard 
+                    users={users}
+                    setUsers={setUsers}
+                    pacientes={pacientes}
+                    setPacientes={setPacientes}
+                    doctors={doctors}
+                    setDoctors={setDoctors}
+                    admins={admins}
+                    setAdmins={setAdmins}
+                  />
                 </React.Suspense>
               }
             >

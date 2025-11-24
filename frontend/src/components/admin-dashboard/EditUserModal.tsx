@@ -35,6 +35,11 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
     setTimeout(() => setIsVisible(true), 10);
   }, [user]);
 
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => onClose(), 300); // esperar a que termine la transición
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -93,7 +98,7 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
       style={{ backgroundColor: "rgba(0,0,0,0.5" }}
       aria-modal="true"
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget) handleClose();
       }}
     >
       <form
@@ -218,7 +223,7 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
           <button
             type="button"
             className="mr-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-            onClick={onClose}
+            onClick={handleClose}
           >
             Cancelar
           </button>

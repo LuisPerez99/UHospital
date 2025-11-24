@@ -24,6 +24,11 @@ export function ViewUserModal({
     setTimeout(() => setIsVisible(true), 10);
   }, []);
 
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => onClose(), 300); // esperar a que termine la transición
+  }
+
   return (
     <div>
       <div
@@ -33,14 +38,14 @@ export function ViewUserModal({
         role="dialog"
         aria-modal="true"
         onClick={(e) => {
-          if (e.target === e.currentTarget) onClose();
+          if (e.target === e.currentTarget) handleClose();
         }}
       >
         <div className="bg-white rounded-lg shadow-lg p-6 w-96">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Detalles del Usuario</h2>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="text-red-600 hover:text-red-800"
               title="Cerrar"
             >

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useOutletContext } from "react-router";
 import { BsPencilFill, BsTrashFill, BsEyeFill } from "react-icons/bs";
 import type {
   Admin,
@@ -7,16 +8,23 @@ import type {
   User,
   ExtendedUser,
 } from "../../models/models";
-import { users, pacientes, doctors, admins } from "../../data/users";
 import { EditUserModal } from "./EditUserModal";
 import { ViewUserModal } from "./ViewUserModal";
 
+interface UserManagementContext {
+  users: User[];
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+  pacientes: Paciente[];
+  setPacientes: React.Dispatch<React.SetStateAction<Paciente[]>>;
+  doctors: Doctor[];
+  setDoctors: React.Dispatch<React.SetStateAction<Doctor[]>>;
+  admins: Admin[];
+  setAdmins: React.Dispatch<React.SetStateAction<Admin[]>>;
+}
+
 export function UserManagement() {
+  const { users: data, setUsers: setData, pacientes: pacientesData, setPacientes: setPacientesData, doctors: doctorsData, setDoctors: setDoctorsData, admins: adminsData, setAdmins: setAdminsData } = useOutletContext<UserManagementContext>();
   const [filter, setFilter] = useState("all");
-  const [data, setData] = useState<User[]>(users);
-  const [pacientesData, setPacientesData] = useState(pacientes);
-  const [doctorsData, setDoctorsData] = useState(doctors);
-  const [adminsData, setAdminsData] = useState(admins);
   const [editingUser, setEditingUser] = useState<ExtendedUser | null>(null);
   const [viewingUser, setViewingUser] = useState<User | null>(null);
 

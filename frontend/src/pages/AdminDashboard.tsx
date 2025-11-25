@@ -38,10 +38,10 @@ export function AdminDashboard({
             </li>
             <li className="mb-2">
               <Link
-                to="system-settings"
+                to="/register"
                 className="text-blue-500 hover:underline"
               >
-                Configuración del Sistema
+                Registrar Usuarios
               </Link>
             </li>
             <li className="mb-2">

@@ -4,6 +4,7 @@ export interface User {
   email: string;
   password: string;
   role: string;
+  active?: boolean;
 }
 
 export interface Paciente {

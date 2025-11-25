@@ -38,7 +38,7 @@ export function AdminDashboard({
             </li>
             <li className="mb-2">
               <Link
-                to="/register"
+                to="register"
                 className="text-blue-500 hover:underline"
               >
                 Registrar Usuarios

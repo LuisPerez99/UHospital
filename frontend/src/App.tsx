@@ -7,7 +7,12 @@ import { Route, Routes } from "react-router";
 import { ConfigProvider } from "./contexts/ConfigContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { UserManagement } from "./components/admin-dashboard/UserManagement";
-import { users as initialUsers, pacientes as initialPacientes, doctors as initialDoctors, admins as initialAdmins } from "./data/users";
+import {
+  users as initialUsers,
+  pacientes as initialPacientes,
+  doctors as initialDoctors,
+  admins as initialAdmins,
+} from "./data/users";
 import type { User, Paciente, Doctor, Admin } from "./models/models";
 
 const AdminDashboard = React.lazy(() =>
@@ -34,98 +39,99 @@ export function App() {
           <NavBar />
           <Routes>
             <Route path="/login" element={<Login users={users} />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/reset-password"
-            element={
-              <div className="p-4">
-                Página de restablecimiento de contraseña (en construcción)
-              </div>
-            }
-          />
-          <Route path="/dashboard">
+            <Route path="/" element={<Home />} />
+            <Route path="/register" element={<Register />} />
             <Route
-              path="admin"
+              path="/reset-password"
               element={
-                <React.Suspense
-                  fallback={<div>Cargando panel de administrador...</div>}
-                >
-                  <AdminDashboard 
-                    users={users}
-                    setUsers={setUsers}
-                    pacientes={pacientes}
-                    setPacientes={setPacientes}
-                    doctors={doctors}
-                    setDoctors={setDoctors}
-                    admins={admins}
-                    setAdmins={setAdmins}
-                  />
-                </React.Suspense>
+                <div className="p-4">
+                  Página de restablecimiento de contraseña (en construcción)
+                </div>
               }
-            >
-              <Route path="user-management" element={<UserManagement />} />
-              <Route path="system-settings" element={
-                <div className="p-4">Configuración del sistema (en construcción)</div>
-              } />
-              <Route path="reports" element={
-                <div className="p-4">Reportes (en construcción)</div>
-              } />
+            />
+            <Route path="/dashboard">
+              <Route
+                path="admin"
+                element={
+                  <React.Suspense
+                    fallback={<div>Cargando panel de administrador...</div>}
+                  >
+                    <AdminDashboard
+                      users={users}
+                      setUsers={setUsers}
+                      pacientes={pacientes}
+                      setPacientes={setPacientes}
+                      doctors={doctors}
+                      setDoctors={setDoctors}
+                      admins={admins}
+                      setAdmins={setAdmins}
+                    />
+                  </React.Suspense>
+                }
+              >
+                <Route path="user-management" element={<UserManagement />} />
+                <Route path="register" element={<Register />} />
+                <Route
+                  path="reports"
+                  element={
+                    <div className="p-4">Reportes (en construcción)</div>
+                  }
+                />
+                <Route
+                  index
+                  element={
+                    <div className="p-4">
+                      Bienvenido al panel de administrador
+                    </div>
+                  }
+                />
+              </Route>
+              <Route
+                path="doctor/*"
+                element={
+                  <React.Suspense
+                    fallback={<div>Cargando panel de doctor...</div>}
+                  >
+                    <SPDoctor />
+                  </React.Suspense>
+                }
+              >
+                <Route
+                  index
+                  element={
+                    <div className="p-4">Bienvenido al panel de doctor</div>
+                  }
+                />
+              </Route>
+              <Route
+                path="paciente/*"
+                element={
+                  <React.Suspense
+                    fallback={<div>Cargando panel de paciente...</div>}
+                  >
+                    <SPPaciente />
+                  </React.Suspense>
+                }
+              >
+                <Route
+                  index
+                  element={
+                    <div className="p-4">Bienvenido al panel de paciente</div>
+                  }
+                />
+              </Route>
               <Route
                 index
                 element={
                   <div className="p-4">
-                    Bienvenido al panel de administrador
+                    Seleccione un panel en el menú lateral
                   </div>
                 }
               />
             </Route>
-            <Route
-              path="doctor/*"
-              element={
-                <React.Suspense
-                  fallback={<div>Cargando panel de doctor...</div>}
-                >
-                  <SPDoctor />
-                </React.Suspense>
-              }
-            >
-              <Route
-                index
-                element={
-                  <div className="p-4">Bienvenido al panel de doctor</div>
-                }
-              />
-            </Route>
-            <Route
-              path="paciente/*"
-              element={
-                <React.Suspense
-                  fallback={<div>Cargando panel de paciente...</div>}
-                >
-                  <SPPaciente />
-                </React.Suspense>
-              }
-            >
-              <Route
-                index
-                element={
-                  <div className="p-4">Bienvenido al panel de paciente</div>
-                }
-              />
-            </Route>
-            <Route
-              index
-              element={
-                <div className="p-4">
-                  Seleccione un panel en el menú lateral
-                </div>
-              }
-            />
-          </Route>
-        </Routes>
-      </div>
-    </ConfigProvider>
+          </Routes>
+        </div>
+      </ConfigProvider>
     </AuthProvider>
   );
 }

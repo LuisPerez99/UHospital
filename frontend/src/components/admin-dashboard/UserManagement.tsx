@@ -169,7 +169,7 @@ export function UserManagement() {
       <div className="w-full bg-gray-100 p-4">
         <h2 className="text-lg font-bold">Gestión de Usuarios</h2>
         <div className="mb-4 flex gap-4">
-          <div className="mb-4 p-4">
+          <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="userFilter">
               Filtrar por rol de usuario
             </label>
@@ -185,7 +185,7 @@ export function UserManagement() {
               <option value="paciente">Pacientes</option>
             </select>
           </div>
-          <div className="mb-4 p-4">
+          <div className="mb-4 px-4">
             <label className="block text-gray-700 mb-2" htmlFor="activeFilter">
               Filtrar por estado activo
             </label>

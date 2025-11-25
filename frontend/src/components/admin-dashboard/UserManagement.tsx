@@ -166,7 +166,7 @@ export function UserManagement() {
 
   return (
     <>
-      <div className="w-full bg-gray-100 p-4">
+      <div className="w-fit bg-gray-100 p-4 rounded-lg shadow-md mb-4">
         <h2 className="text-lg font-bold">Gestión de Usuarios</h2>
         <div className="mb-4 flex gap-4">
           <div className="mb-4">

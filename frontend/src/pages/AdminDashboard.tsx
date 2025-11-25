@@ -24,14 +24,14 @@ export function AdminDashboard({
 }: AdminDashboardProps) {
   return (
     <div className="flex">
-      <div className="w-64 bg-gray-100 p-4">
-        <h2 className="text-lg font-bold">Panel de Administrador</h2>
+      <div className="w-64 bg-gray-100 p-4 rounded-lg shadow-md mt-4 ml-4 mb-4">
+        <h2 className="text-lg font-bold ">Panel de Administrador</h2>
         <nav className="mt-4">
           <ul>
             <li className="mb-2">
               <Link
                 to="user-management"
-                className="text-blue-500 hover:underline"
+                className="bg-gray-200 hover:cursor-pointer hover:bg-gray-300 p-4 rounded-md block shadow-sm"
               >
                 Gestión de Usuarios
               </Link>
@@ -39,7 +39,7 @@ export function AdminDashboard({
             <li className="mb-2">
               <Link
                 to="register"
-                className="text-blue-500 hover:underline"
+                className="bg-gray-200 hover:cursor-pointer hover:bg-gray-300 p-4 rounded-md block shadow-sm"
               >
                 Registrar Usuarios
               </Link>
@@ -47,7 +47,7 @@ export function AdminDashboard({
             <li className="mb-2">
               <Link
                 to="reports"
-                className="text-blue-500 hover:underline"
+                className="bg-gray-200 hover:cursor-pointer hover:bg-gray-300 p-4 rounded-md block shadow-sm"
               >
                 Reportes
               </Link>

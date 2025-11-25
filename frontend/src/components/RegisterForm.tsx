@@ -174,6 +174,16 @@ export function RegisterForm() {
           Iniciar Sesión
         </Link>
       </p>
+
+        {emailError || passwordError ? (
+          <div className="max-w-md mx-auto mt-4 p-4 border border-red-500 bg-red-100 text-red-700 rounded">
+            {emailError && <p>El correo electrónico ya está en uso.</p>}
+            {passwordError && <p>Las contraseñas no coinciden.</p>}
+          </div>
+        ) : null
+
+        }
+
     </>
   );
 }

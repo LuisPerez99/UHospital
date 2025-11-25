@@ -11,6 +11,7 @@ interface LoginFormProps {
 export function LoginForm({ users }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
+  const [loginError, setLoginError] = useState(false);
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { login, user, authenticate } = useAuth();
@@ -20,10 +21,10 @@ export function LoginForm({ users }: LoginFormProps) {
 
     try {
       const foundUser = authenticate(email, password, users);
-      if (foundUser) {
+      if (foundUser && foundUser.active) {
         login(foundUser);
       } else {
-        alert("Credenciales inválidas. Por favor, inténtelo de nuevo.");
+        setLoginError(true);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -58,7 +59,7 @@ export function LoginForm({ users }: LoginFormProps) {
           <input
             type="email"
             id="email"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className={`w-full px-3 py-2 border ${loginError ? "border-red-500 text-red-700" : "border-gray-300"} rounded`}
             placeholder="Ingrese su correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -72,7 +73,7 @@ export function LoginForm({ users }: LoginFormProps) {
             <input
               type={showPassword ? "text" : "password"}
               id="password"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={`w-full px-3 py-2 border ${loginError ? "border-red-500 text-red-700" : "border-gray-300"} rounded`}
               placeholder="Ingrese su contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -80,7 +81,7 @@ export function LoginForm({ users }: LoginFormProps) {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className={`absolute right-2 top-1/2 -translate-y-1/2 ${loginError ? "text-red-700" : "text-gray-500"} hover:${loginError ? "text-red-700" : "text-gray-700"}`}
             >
               {showPassword ? <BsEyeSlashFill /> : <BsEyeFill />}
             </button>
@@ -106,6 +107,11 @@ export function LoginForm({ users }: LoginFormProps) {
           Restablecer contraseña
         </Link>
       </p>
+      {loginError && (
+        <div className="max-w-md mx-auto mt-4 p-4 border border-red-500 bg-red-100 text-red-700 rounded">
+          Correo electrónico o contraseña incorrectos, o la cuenta está inactiva.
+        </div>
+      )}
     </>
   );
 }

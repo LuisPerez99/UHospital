@@ -18,8 +18,8 @@ import type { User, Paciente, Doctor, Admin } from "./models/models";
 const AdminDashboard = React.lazy(() =>
   import("./pages/AdminDashboard").then((m) => ({ default: m.AdminDashboard }))
 );
-const SPPaciente = React.lazy(() =>
-  import("./components/SPPaciente").then((m) => ({ default: m.SPPaciente }))
+const PacienteDashboard = React.lazy(() =>
+  import("./pages/PacienteDashboard").then((m) => ({ default: m.PacienteDashboard }))
 );
 const SPDoctor = React.lazy(() =>
   import("./components/SPDoctor").then((m) => ({ default: m.SPDoctor }))
@@ -77,14 +77,6 @@ export function App() {
                     <div className="p-4">Reportes (en construcción)</div>
                   }
                 />
-                <Route
-                  index
-                  element={
-                    <div className="p-4">
-                      Bienvenido al panel de administrador
-                    </div>
-                  }
-                />
               </Route>
               <Route
                 path="doctor/*"
@@ -109,16 +101,10 @@ export function App() {
                   <React.Suspense
                     fallback={<div>Cargando panel de paciente...</div>}
                   >
-                    <SPPaciente />
+                    <PacienteDashboard />
                   </React.Suspense>
                 }
               >
-                <Route
-                  index
-                  element={
-                    <div className="p-4">Bienvenido al panel de paciente</div>
-                  }
-                />
               </Route>
               <Route
                 index

@@ -1,5 +1,8 @@
 import { Link, Outlet } from "react-router";
 import type { User, Paciente, Doctor, Admin } from "../models/models";
+import { useAuth } from "../contexts/AuthContext";
+
+const { user } = useAuth();
 
 interface AdminDashboardProps {
   users: User[];
@@ -46,6 +49,9 @@ export function AdminDashboard({
             Reportes
           </Link>
         </nav>
+        <div className="mt-4 text-sm text-gray-600">
+          Conectado como: {user?.username}
+        </div>
       </div>
       <div className="flex-1 p-4">
         <Outlet context={{ users, setUsers, pacientes, setPacientes, doctors, setDoctors, admins, setAdmins }} />

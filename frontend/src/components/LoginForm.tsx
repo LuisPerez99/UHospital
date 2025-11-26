@@ -41,8 +41,8 @@ export function LoginForm({ users }: LoginFormProps) {
         navigate("/dashboard/doctor");
         return;
       }
-      if (user.role === "PATIENT") {
-        navigate("/dashboard/patient");
+      if (user.role === "PACIENTE") {
+        navigate("/dashboard/paciente");
         return;
       }
     }

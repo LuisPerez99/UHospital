@@ -28,6 +28,11 @@ export function PacienteDashboard() {
             Mi Perfil
           </Link>
         </nav>
+        <div className="mt-4 text-sm text-gray-600">
+          Conectado como: {user?.username}
+        </div>
+      </div>
+      <div className="flex-1 p-4">
         <Outlet />
       </div>
     </div>

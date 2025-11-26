@@ -105,6 +105,22 @@ export function App() {
                   </React.Suspense>
                 }
               >
+                <Route
+                  path="appointments"
+                  element={
+                    <div className="p-4">Mis Citas (en construcción)</div>
+                  }
+                />
+                <Route
+                  path="medical-records"
+                  element={
+                    <div className="p-4">Mi Historial Médico (en construcción)</div>
+                  }
+                />
+                <Route
+                  path="profile"
+                  element={<div className="p-4">Mi Perfil (en construcción)</div>}
+                />
               </Route>
               <Route
                 index

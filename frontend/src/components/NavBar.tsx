@@ -40,7 +40,7 @@ export function NavBar() {
   }, []);
 
   return (
-    <nav className="bg-blue-600 p-4 text-white">
+    <nav className="bg-blue-600 p-4 text-white shadow-md">
       <div className="flex justify-between items-center">
         <div className="text-lg font-bold">
           <Link to="/">UHospital</Link>
@@ -51,7 +51,7 @@ export function NavBar() {
               <span className="mr-4">Hola, {user.username}</span>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:scale-105"
               >
                 Cerrar Sesión
               </button>

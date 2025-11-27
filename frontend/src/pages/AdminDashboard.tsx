@@ -2,8 +2,6 @@ import { Link, Outlet } from "react-router";
 import type { User, Paciente, Doctor, Admin } from "../models/models";
 import { useAuth } from "../contexts/AuthContext";
 
-const { user } = useAuth();
-
 interface AdminDashboardProps {
   users: User[];
   setUsers: React.Dispatch<React.SetStateAction<User[]>>;
@@ -25,6 +23,7 @@ export function AdminDashboard({
   admins,
   setAdmins,
 }: AdminDashboardProps) {
+  const { user } = useAuth();
   return (
     <div className="flex">
       <div className="w-64 bg-gray-100 p-4 rounded-lg shadow-md mt-4 ml-4 mb-4">

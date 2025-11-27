@@ -6,7 +6,7 @@ import { Register } from "./pages/Register";
 import { Route, Routes } from "react-router";
 import { ConfigProvider } from "./contexts/ConfigContext";
 import { AuthProvider } from "./contexts/AuthContext";
-import { UserManagement } from "./components/admin-dashboard/UserManagement";
+import { UserManagement } from "./components/UserManagement";
 import {
   users as initialUsers,
   pacientes as initialPacientes,
@@ -20,7 +20,9 @@ const AdminDashboard = React.lazy(() =>
   import("./pages/AdminDashboard").then((m) => ({ default: m.AdminDashboard }))
 );
 const PacienteDashboard = React.lazy(() =>
-  import("./pages/PacienteDashboard").then((m) => ({ default: m.PacienteDashboard }))
+  import("./pages/PacienteDashboard").then((m) => ({
+    default: m.PacienteDashboard,
+  }))
 );
 const SPDoctor = React.lazy(() =>
   import("./components/SPDoctor").then((m) => ({ default: m.SPDoctor }))
@@ -39,7 +41,17 @@ export function App() {
         <div className="App">
           <NavBar />
           <Routes>
-            <Route path="/login" element={<Login users={users} pacientes={pacientes} doctors={doctors} admins={admins} />} />
+            <Route
+              path="/login"
+              element={
+                <Login
+                  users={users}
+                  pacientes={pacientes}
+                  doctors={doctors}
+                  admins={admins}
+                />
+              }
+            />
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route
@@ -90,6 +102,21 @@ export function App() {
                 }
               >
                 <Route
+                  path="profile"
+                  element={
+                    <Profile
+                      users={users}
+                      setUsers={setUsers}
+                      pacientes={pacientes}
+                      setPacientes={setPacientes}
+                      doctors={doctors}
+                      setDoctors={setDoctors}
+                      admins={admins}
+                      setAdmins={setAdmins}
+                    />
+                  }
+                />
+                <Route
                   index
                   element={
                     <div className="p-4">Bienvenido al panel de doctor</div>
@@ -115,12 +142,25 @@ export function App() {
                 <Route
                   path="medical-records"
                   element={
-                    <div className="p-4">Mi Historial Médico (en construcción)</div>
+                    <div className="p-4">
+                      Mi Historial Médico (en construcción)
+                    </div>
                   }
                 />
                 <Route
                   path="profile"
-                  element={<Profile />}
+                  element={
+                    <Profile
+                      users={users}
+                      setUsers={setUsers}
+                      pacientes={pacientes}
+                      setPacientes={setPacientes}
+                      doctors={doctors}
+                      setDoctors={setDoctors}
+                      admins={admins}
+                      setAdmins={setAdmins}
+                    />
+                  }
                 />
               </Route>
               <Route

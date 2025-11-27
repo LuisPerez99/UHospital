@@ -1,4 +1,4 @@
-import type { User, Paciente, Doctor, Admin } from "../../models/models";
+import type { User, Paciente, Doctor, Admin } from "../models/models";
 import { useEffect, useState } from "react";
 import { BsXCircle } from "react-icons/bs";
 

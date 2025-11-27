@@ -7,10 +7,10 @@ import type {
   Paciente,
   User,
   ExtendedUser,
-} from "../../models/models";
+} from "../models/models";
 import { EditUserModal } from "./EditUserModal";
 import { ViewUserModal } from "./ViewUserModal";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 
 interface UserManagementContext {
   users: User[];

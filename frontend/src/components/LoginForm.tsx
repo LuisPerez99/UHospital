@@ -1,14 +1,17 @@
 import { Link, useNavigate } from "react-router";
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 import { useState, useEffect } from "react";
-import type { User } from "../models/models";
+import type { User, Paciente, Doctor, Admin } from "../models/models";
 import { useAuth } from "../contexts/AuthContext";
 
 interface LoginFormProps {
   users: User[];
+  pacientes: Paciente[];
+  doctors: Doctor[];
+  admins: Admin[];
 }
 
-export function LoginForm({ users }: LoginFormProps) {
+export function LoginForm({ users, pacientes, doctors, admins }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [loginError, setLoginError] = useState(false);
@@ -20,8 +23,8 @@ export function LoginForm({ users }: LoginFormProps) {
     event.preventDefault();
 
     try {
-      const foundUser = authenticate(email, password, users);
-      if (foundUser && foundUser.active) {
+      const foundUser = authenticate(email, password, users, pacientes, doctors, admins);
+      if (foundUser && (foundUser.active ?? true)) {
         login(foundUser);
       } else {
         setLoginError(true);

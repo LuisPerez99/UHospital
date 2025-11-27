@@ -38,7 +38,7 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
   const handleClose = () => {
     setIsVisible(false);
     setTimeout(() => onClose(), 300); // esperar a que termine la transición
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,137 +102,142 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
       }}
     >
       <form
-        className={`max-w-md max-h-full mx-auto bg-white p-6 rounded-lg shadow-md overflow-y-auto transition-all duration-300 ${
+        className={`max-w-md max-h-[90vh] mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden transition-all duration-300 ${
           isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
         onSubmit={handleSubmit}
       >
-        <h2 className="text-2xl font-bold mb-4">Editar Usuario</h2>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="username">
-            Nombre de Usuario
-          </label>
-          <input
-            type="text"
-            id="username"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
-            placeholder="Ingrese el nombre de usuario"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="nombre">
-            Nombre
-          </label>
-          <input
-            type="text"
-            id="nombre"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
-            placeholder="Ingrese el nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="apellido">
-            Apellido
-          </label>
-          <input
-            type="text"
-            id="apellido"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
-            placeholder="Ingrese el apellido"
-            value={apellido}
-            onChange={(e) => setApellido(e.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 mb-2"
-            htmlFor="fecha_nacimiento"
-          >
-            Fecha de Nacimiento
-          </label>
-          <input
-            type="date"
-            id="fecha_nacimiento"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
-            value={fechaNacimiento}
-            onChange={(e) => setFechaNacimiento(e.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="genero">
-            Género
-          </label>
-          <select
-            id="genero"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
-            value={genero}
-            onChange={(e) => setGenero(e.target.value)}
-          >
-            <option value="">Seleccione el género</option>
-            <option value="Masculino">Masculino</option>
-            <option value="Femenino">Femenino</option>
-            <option value="Otro">Otro</option>
-          </select>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="telefono">
-            Teléfono
-          </label>
-          <input
-            type="text"
-            id="telefono"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
-            placeholder="Ingrese el número de teléfono"
-            value={telefono}
-            onChange={(e) => setTelefono(e.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="direccion">
-            Dirección
-          </label>
-          <input
-            type="text"
-            id="direccion"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
-            placeholder="Ingrese la dirección"
-            value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
-          />
-        </div>
-        {user && user.role.toLowerCase() === "doctor" && (
+        <div className="p-6 overflow-y-auto max-h-[90vh] scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 hover:scrollbar-thumb-gray-500 pr-3 scrollbar-thumb-rounded-full scrollbar-track-rounded-full" style={{ scrollbarGutter: "stable both-edges" }}>
+          <h2 className="text-2xl font-bold mb-4">Editar Usuario</h2>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="especialidad">
-              Especialidad
+            <label className="block text-gray-700 mb-2" htmlFor="username">
+              Nombre de Usuario
             </label>
             <input
               type="text"
-              id="especialidad"
+              id="username"
               className="w-full px-3 py-2 border border-gray-300 rounded"
-              placeholder="Ingrese la especialización del doctor"
-              value={especialidad}
-              onChange={(e) => setEspecialidad(e.target.value)}
+              placeholder="Ingrese el nombre de usuario"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-        )}
-        <div className="flex justify-end">
-          <button
-            type="button"
-            className="mr-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-            onClick={handleClose}
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Guardar Cambios
-          </button>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="nombre">
+              Nombre
+            </label>
+            <input
+              type="text"
+              id="nombre"
+              className="w-full px-3 py-2 border border-gray-300 rounded"
+              placeholder="Ingrese el nombre"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="apellido">
+              Apellido
+            </label>
+            <input
+              type="text"
+              id="apellido"
+              className="w-full px-3 py-2 border border-gray-300 rounded"
+              placeholder="Ingrese el apellido"
+              value={apellido}
+              onChange={(e) => setApellido(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 mb-2"
+              htmlFor="fecha_nacimiento"
+            >
+              Fecha de Nacimiento
+            </label>
+            <input
+              type="date"
+              id="fecha_nacimiento"
+              className="w-full px-3 py-2 border border-gray-300 rounded"
+              value={fechaNacimiento}
+              onChange={(e) => setFechaNacimiento(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="genero">
+              Género
+            </label>
+            <select
+              id="genero"
+              className="w-full px-3 py-2 border border-gray-300 rounded"
+              value={genero}
+              onChange={(e) => setGenero(e.target.value)}
+            >
+              <option value="">Seleccione el género</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="telefono">
+              Teléfono
+            </label>
+            <input
+              type="text"
+              id="telefono"
+              className="w-full px-3 py-2 border border-gray-300 rounded"
+              placeholder="Ingrese el número de teléfono"
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="direccion">
+              Dirección
+            </label>
+            <input
+              type="text"
+              id="direccion"
+              className="w-full px-3 py-2 border border-gray-300 rounded"
+              placeholder="Ingrese la dirección"
+              value={direccion}
+              onChange={(e) => setDireccion(e.target.value)}
+            />
+          </div>
+          {user && user.role.toLowerCase() === "doctor" && (
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 mb-2"
+                htmlFor="especialidad"
+              >
+                Especialidad
+              </label>
+              <input
+                type="text"
+                id="especialidad"
+                className="w-full px-3 py-2 border border-gray-300 rounded"
+                placeholder="Ingrese la especialización del doctor"
+                value={especialidad}
+                onChange={(e) => setEspecialidad(e.target.value)}
+              />
+            </div>
+          )}
+          <div className="flex justify-end pt-4">
+            <button
+              type="button"
+              className="mr-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+              onClick={handleClose}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Guardar Cambios
+            </button>
+          </div>
         </div>
       </form>
     </div>

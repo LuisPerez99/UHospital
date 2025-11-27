@@ -14,6 +14,7 @@ import {
   admins as initialAdmins,
 } from "./data/users";
 import type { User, Paciente, Doctor, Admin } from "./models/models";
+import { Profile } from "./components/Profile";
 
 const AdminDashboard = React.lazy(() =>
   import("./pages/AdminDashboard").then((m) => ({ default: m.AdminDashboard }))
@@ -38,7 +39,7 @@ export function App() {
         <div className="App">
           <NavBar />
           <Routes>
-            <Route path="/login" element={<Login users={users} />} />
+            <Route path="/login" element={<Login users={users} pacientes={pacientes} doctors={doctors} admins={admins} />} />
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route
@@ -119,7 +120,7 @@ export function App() {
                 />
                 <Route
                   path="profile"
-                  element={<div className="p-4">Mi Perfil (en construcción)</div>}
+                  element={<Profile />}
                 />
               </Route>
               <Route

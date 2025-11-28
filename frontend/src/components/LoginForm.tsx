@@ -1,35 +1,33 @@
 import { Link, useNavigate } from "react-router";
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 import { useState, useEffect } from "react";
-import type { User } from "../models/models";
-import { users } from "../data/users";
+import type { User, Paciente, Doctor, Admin } from "../models/models";
 import { useAuth } from "../contexts/AuthContext";
 
-export function LoginForm() {
+interface LoginFormProps {
+  users: User[];
+  pacientes: Paciente[];
+  doctors: Doctor[];
+  admins: Admin[];
+}
+
+export function LoginForm({ users, pacientes, doctors, admins }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
+  const [loginError, setLoginError] = useState(false);
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login, user } = useAuth();
+  const { login, user, authenticate } = useAuth();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
-      const user = users.find(
-        (u) => u.email === email && u.password === password
-      );
-      if (user) {
-        const saveUser: User = {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          password: "",
-          role: user.role,
-        };
-        login(saveUser);
+      const foundUser = authenticate(email, password, users, pacientes, doctors, admins);
+      if (foundUser && (foundUser.active ?? true)) {
+        login(foundUser);
       } else {
-        alert("Credenciales inválidas. Por favor, inténtelo de nuevo.");
+        setLoginError(true);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -46,8 +44,8 @@ export function LoginForm() {
         navigate("/dashboard/doctor");
         return;
       }
-      if (user.role === "PATIENT") {
-        navigate("/dashboard/patient");
+      if (user.role === "PACIENTE") {
+        navigate("/dashboard/paciente");
         return;
       }
     }
@@ -64,7 +62,7 @@ export function LoginForm() {
           <input
             type="email"
             id="email"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className={`w-full px-3 py-2 border ${loginError ? "border-red-500 text-red-700" : "border-gray-300"} rounded`}
             placeholder="Ingrese su correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -78,7 +76,7 @@ export function LoginForm() {
             <input
               type={showPassword ? "text" : "password"}
               id="password"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={`w-full px-3 py-2 border ${loginError ? "border-red-500 text-red-700" : "border-gray-300"} rounded`}
               placeholder="Ingrese su contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -86,7 +84,7 @@ export function LoginForm() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className={`absolute right-2 top-1/2 -translate-y-1/2 ${loginError ? "text-red-700" : "text-gray-500"} hover:${loginError ? "text-red-700" : "text-gray-700"}`}
             >
               {showPassword ? <BsEyeSlashFill /> : <BsEyeFill />}
             </button>
@@ -102,7 +100,7 @@ export function LoginForm() {
       </form>
       <p className="text-center mt-4">
         ¿No tienes una cuenta?{" "}
-        <Link to="/register" className="text-blue-600 hover:underline">
+        <Link to="/registro" className="text-blue-600 hover:underline">
           Crear una cuenta nueva
         </Link>
       </p>
@@ -112,6 +110,11 @@ export function LoginForm() {
           Restablecer contraseña
         </Link>
       </p>
+      {loginError && (
+        <div className="max-w-md mx-auto mt-4 p-4 border border-red-500 bg-red-100 text-red-700 rounded">
+          Correo electrónico o contraseña incorrectos, o la cuenta está inactiva.
+        </div>
+      )}
     </>
   );
 }

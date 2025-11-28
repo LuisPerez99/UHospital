@@ -4,6 +4,7 @@ export interface User {
   email: string;
   password: string;
   role: string;
+  active?: boolean;
 }
 
 export interface Paciente {
@@ -14,6 +15,7 @@ export interface Paciente {
   genero: string;
   telefono: string;
   direccion: string;
+  historial_medico?: string;
 }
 
 export interface Doctor {
@@ -37,6 +39,16 @@ export interface Admin {
   direccion: string;
 }
 
+export interface Cita{
+  id: number;
+  pacienteEmail: string;
+  doctorEmail: string;
+  fecha: string;
+  hora: string;
+  motivo: string;
+  estado: string;
+}
+
 export type ExtendedUser = User & {
   nombre?: string;
   apellido?: string;
@@ -45,4 +57,5 @@ export type ExtendedUser = User & {
   telefono?: string;
   direccion?: string;
   especialidad?: string;
+  historial_medico?: string;
 };

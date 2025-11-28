@@ -1,6 +1,7 @@
-import type { User, Paciente, Doctor, Admin } from "../../models/models";
+import type { User, Paciente, Doctor, Admin } from "../models/models";
 import { useEffect, useState } from "react";
 import { BsXCircle } from "react-icons/bs";
+import Avatar from "boring-avatars";
 
 interface ViewUserModalProps {
   user: User;
@@ -24,8 +25,13 @@ export function ViewUserModal({
     setTimeout(() => setIsVisible(true), 10);
   }, []);
 
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => onClose(), 300); // esperar a que termine la transición
+  };
+
   return (
-    <div>
+    <>
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 sm:items-start sm:pt-10 transition-opacity duration-300 ${
           isVisible ? "opacity-100" : "opacity-0"
@@ -33,31 +39,42 @@ export function ViewUserModal({
         role="dialog"
         aria-modal="true"
         onClick={(e) => {
-          if (e.target === e.currentTarget) onClose();
+          if (e.target === e.currentTarget) handleClose();
         }}
       >
-        <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+        <div className={`bg-white rounded-lg shadow-lg p-6 w-96 items-center relative transition-transform duration-300 transform ${
+          isVisible ? "scale-100" : "scale-95"
+        }`}>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Detalles del Usuario</h2>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="text-red-600 hover:text-red-800"
               title="Cerrar"
             >
               <BsXCircle size={24} />
             </button>
           </div>
-          <p>
+          <Avatar
+            size={100}
+            name={user.username}
+            variant="beam"
+            colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
+            className="mb-4 mx-auto"
+          />
+          <div className="text-center mb-4">
+            <h3 className="text-xl font-semibold">
+              {user.username}
+            </h3>
+            <p className="text-gray-600">{user.role}</p>
+          </div>
+          <div className="text-left">
+          <p className="mb-2">
             <strong>ID:</strong> {user.id}
           </p>
-          <p>
-            <strong>Username:</strong> {user.username}
-          </p>
-          <p>
+          </div>
+          <p className="mb-2">
             <strong>Email:</strong> {user.email}
-          </p>
-          <p>
-            <strong>Role:</strong> {user.role}
           </p>
           {user.role === "PACIENTE" &&
             (() => {
@@ -66,23 +83,23 @@ export function ViewUserModal({
               ) as Paciente;
               return paciente ? (
                 <>
-                  <p>
+                  <p className="mb-2">
                     <strong>Nombre:</strong> {paciente.nombre}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Apellido:</strong> {paciente.apellido}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Fecha de Nacimiento:</strong>{" "}
                     {paciente.fecha_nacimiento}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Género:</strong> {paciente.genero}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Teléfono:</strong> {paciente.telefono}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Dirección:</strong> {paciente.direccion}
                   </p>
                 </>
@@ -95,26 +112,26 @@ export function ViewUserModal({
               ) as Doctor;
               return doctor ? (
                 <>
-                  <p>
+                  <p className="mb-2">
                     <strong>Nombre:</strong> {doctor.nombre}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Apellido:</strong> {doctor.apellido}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Fecha de Nacimiento:</strong>{" "}
                     {doctor.fecha_nacimiento}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Género:</strong> {doctor.genero}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Teléfono:</strong> {doctor.telefono}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Dirección:</strong> {doctor.direccion}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Especialidad:</strong> {doctor.especialidad}
                   </p>
                 </>
@@ -125,23 +142,23 @@ export function ViewUserModal({
               const admin = admins.find((a) => a.email === user.email) as Admin;
               return admin ? (
                 <>
-                  <p>
+                  <p className="mb-2">
                     <strong>Nombre:</strong> {admin.nombre}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Apellido:</strong> {admin.apellido}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Fecha de Nacimiento:</strong>{" "}
                     {admin.fecha_nacimiento}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Género:</strong> {admin.genero}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Teléfono:</strong> {admin.telefono}
                   </p>
-                  <p>
+                  <p className="mb-2">
                     <strong>Dirección:</strong> {admin.direccion}
                   </p>
                 </>
@@ -149,6 +166,6 @@ export function ViewUserModal({
             })()}
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -101,23 +101,28 @@ export function RegisterForm() {
             </button>
           </div>
         </div>
-        {localStorage.getItem("loggedInUser") && JSON.parse(localStorage.getItem("loggedInUser") || "{}").role === "ADMIN" && (
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="role">
-              Rol
-            </label>
-            <select
-              id="role"
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            >
-              <option value="DOCTOR">Doctor</option>
-              <option value="ADMIN">Administrador</option>
-            </select>
-          </div>
-        )}
-        {localStorage.getItem("loggedInUser") && JSON.parse(localStorage.getItem("loggedInUser") || "{}").role === "ADMIN" &&
+        {localStorage.getItem("loggedInUser") &&
+          JSON.parse(localStorage.getItem("loggedInUser") || "{}").role ===
+            "ADMIN" && (
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2" htmlFor="role">
+                Rol
+              </label>
+              <select
+                id="role"
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded"
+              >
+                <option value="DOCTOR">Doctor</option>
+                <option value="ADMIN">Administrador</option>
+                <option value="PACIENTE">Paciente</option>
+              </select>
+            </div>
+          )}
+        {localStorage.getItem("loggedInUser") &&
+          JSON.parse(localStorage.getItem("loggedInUser") || "{}").role ===
+            "ADMIN" &&
           selectedRole === "DOCTOR" && (
             <RegisterDoctor
               username={username}
@@ -134,7 +139,9 @@ export function RegisterForm() {
               onPasswordError={setPasswordError}
             />
           )}
-        {localStorage.getItem("loggedInUser") && JSON.parse(localStorage.getItem("loggedInUser") || "{}").role === "ADMIN" &&
+        {localStorage.getItem("loggedInUser") &&
+          JSON.parse(localStorage.getItem("loggedInUser") || "{}").role ===
+            "ADMIN" &&
           selectedRole === "ADMIN" && (
             <RegisterAdmin
               username={username}
@@ -151,7 +158,10 @@ export function RegisterForm() {
               onPasswordError={setPasswordError}
             />
           )}
-        {!localStorage.getItem("loggedInUser") && (
+        {(!localStorage.getItem("loggedInUser") ||
+          (JSON.parse(localStorage.getItem("loggedInUser") || "{}").role ===
+            "ADMIN" &&
+            selectedRole === "PACIENTE")) && (
           <RegisterPaciente
             username={username}
             onUsernameChange={setUsername}
@@ -168,12 +178,21 @@ export function RegisterForm() {
           />
         )}
       </form>
-      <p className="text-center mt-4">
-        ¿Ya tienes una cuenta?{" "}
-        <Link to="/login" className="text-blue-600 hover:underline">
-          Iniciar Sesión
-        </Link>
-      </p>
+      {!localStorage.getItem("loggedInUser") && (
+        <p className="text-center mt-4">
+          ¿Ya tienes una cuenta?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Iniciar Sesión
+          </Link>
+        </p>
+      )}
+
+      {emailError || passwordError ? (
+        <div className="max-w-md mx-auto mt-4 p-4 border border-red-500 bg-red-100 text-red-700 rounded">
+          {emailError && <p>El correo electrónico ya está en uso.</p>}
+          {passwordError && <p>Las contraseñas no coinciden.</p>}
+        </div>
+      ) : null}
     </>
   );
 }

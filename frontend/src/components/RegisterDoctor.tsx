@@ -98,13 +98,7 @@ export function RegisterDoctor({
       onEmailError?.(false);
       onPasswordError?.(false);
       onConfirmPasswordChange("");
-
-      doctors.forEach((doctor) => {
-        // print doctor info to console
-        console.log(
-          `Doctor: ${doctor.nombre} ${doctor.apellido}, Especialidad: ${doctor.especialidad}, Email: ${doctor.email}, Teléfono: ${doctor.telefono}`
-        );
-      });
+      
     } catch (error) {
       console.error(error);
       setErrorMessage("Ocurrió un error inesperado. Intente nuevamente");

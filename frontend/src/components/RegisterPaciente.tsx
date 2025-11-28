@@ -41,6 +41,8 @@ export function RegisterPaciente({
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,8 +94,6 @@ export function RegisterPaciente({
 
       pacientes.push(paciente);
 
-      alert(`Paciente ${user.username} registrado exitosamente, redireccionando a la página de login...`);
-
       setNombre("");
       setApellido("");
       setFechaNacimiento("");
@@ -108,9 +108,20 @@ export function RegisterPaciente({
       onPasswordChange("");
       onConfirmPasswordChange("");
 
-      pacientes.forEach(paciente => {
-        console.log(`Paciente: ${paciente.nombre} ${paciente.apellido}, Email: ${paciente.email}, Teléfono: ${paciente.telefono}`);
-      });
+      if (localStorage.getItem("loggedInUser")) {
+        const loggedInUser = JSON.parse(
+          localStorage.getItem("loggedInUser") || "{}"
+        );
+        if (loggedInUser.role === "ADMIN") {
+          return;
+        }
+      }
+
+      setRegisterSuccess(true);
+      setTimeout(() => {
+        setRegisterSuccess(false);
+      }, 3000);
+
       navigate("/login", { replace: true });
     } catch (error) {
       console.error(error);
@@ -171,7 +182,7 @@ export function RegisterPaciente({
           placeholder="Ingrese el teléfono del paciente"
           value={telefono}
           onChange={(e) => setTelefono(e.target.value)}
-          />
+        />
       </div>
       <div className="mb-4">
         <label className="block text-gray-700 mb-2" htmlFor="direccion">
@@ -184,7 +195,7 @@ export function RegisterPaciente({
           placeholder="Ingrese la dirección del paciente"
           value={direccion}
           onChange={(e) => setDireccion(e.target.value)}
-          />
+        />
       </div>
       <div className="mb-4">
         <label className="block text-gray-700 mb-2" htmlFor="fecha_nacimiento">
@@ -196,18 +207,23 @@ export function RegisterPaciente({
           className="w-full px-3 py-2 border border-gray-300 rounded"
           value={fechaNacimiento}
           onChange={(e) => setFechaNacimiento(e.target.value)}
-          />
+        />
       </div>
       {errorMessage && (
         <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {errorMessage}
         </div>
       )}
+      {registerSuccess && (
+        <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+          Registro exitoso. Redirigiendo a la página de inicio de sesión...
+        </div>
+      )}
       <button
         type="submit"
         className="w-full bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"
         onClick={handleSubmit}
-        >
+      >
         Registrar Paciente
       </button>
     </>

@@ -6,7 +6,8 @@ export const users: User[] = [
         username: 'admin',
         email: 'admin@example.com',
         password: 'adminpassword',
-        role: 'ADMIN'
+        role: 'ADMIN',
+        active: true
     },
     {
         id: 2,
@@ -20,7 +21,8 @@ export const users: User[] = [
         username: 'patient1',
         email: 'patient1@example.com',
         password: 'patientpassword',
-        role: 'PACIENTE'
+        role: 'PACIENTE',
+        active: true
     },
     {
         id: 4,
@@ -34,7 +36,8 @@ export const users: User[] = [
         username: 'doctor2',
         email: 'doctor2@example.com',
         password: 'doctorpassword2',
-        role: 'DOCTOR'
+        role: 'DOCTOR',
+        active: true
     },
     {
         id: 6,

@@ -31,7 +31,7 @@ export function ViewUserModal({
   };
 
   return (
-    <div>
+    <>
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 sm:items-start sm:pt-10 transition-opacity duration-300 ${
           isVisible ? "opacity-100" : "opacity-0"
@@ -166,6 +166,6 @@ export function ViewUserModal({
             })()}
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -17,6 +17,7 @@ import { citas as initialCitas } from "./data/citas";
 import type { User, Paciente, Doctor, Admin } from "./models/models";
 import { Profile } from "./components/Profile";
 import { Citas } from "./components/Citas";
+import { HistorialMedico } from "./components/HistorialMedico";
 
 const AdminDashboard = React.lazy(() =>
   import("./pages/AdminDashboard").then((m) => ({ default: m.AdminDashboard }))
@@ -138,21 +139,14 @@ export function App() {
                 <Route
                   path="citas"
                   element={
-                    <Citas 
-                      citas={initialCitas} 
-                      pacientes={pacientes} 
+                    <Citas
+                      citas={initialCitas}
+                      pacientes={pacientes}
                       doctors={doctors}
                     />
                   }
                 />
-                <Route
-                  path="historial-medico"
-                  element={
-                    <div className="p-4">
-                      Mi Historial Médico (en construcción)
-                    </div>
-                  }
-                />
+                <Route path="historial-medico" element={<HistorialMedico />} />
                 <Route
                   path="perfil"
                   element={

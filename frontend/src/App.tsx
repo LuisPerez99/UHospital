@@ -13,8 +13,10 @@ import {
   doctors as initialDoctors,
   admins as initialAdmins,
 } from "./data/users";
+import { citas as initialCitas } from "./data/citas";
 import type { User, Paciente, Doctor, Admin } from "./models/models";
 import { Profile } from "./components/Profile";
+import { Citas } from "./components/Citas";
 
 const AdminDashboard = React.lazy(() =>
   import("./pages/AdminDashboard").then((m) => ({ default: m.AdminDashboard }))
@@ -136,7 +138,7 @@ export function App() {
                 <Route
                   path="appointments"
                   element={
-                    <div className="p-4">Mis Citas (en construcción)</div>
+                    <Citas citas={initialCitas} />
                   }
                 />
                 <Route

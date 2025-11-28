@@ -158,25 +158,25 @@ export function RegisterForm() {
               onPasswordError={setPasswordError}
             />
           )}
-        {!localStorage.getItem("loggedInUser") ||
+        {(!localStorage.getItem("loggedInUser") ||
           (JSON.parse(localStorage.getItem("loggedInUser") || "{}").role ===
             "ADMIN" &&
-            selectedRole === "PACIENTE" && (
-              <RegisterPaciente
-                username={username}
-                onUsernameChange={setUsername}
-                email={email}
-                onEmailChange={setEmail}
-                password={password}
-                onPasswordChange={setPassword}
-                confirmPassword={confirmPassword}
-                onConfirmPasswordChange={setConfirmPassword}
-                emailError={emailError}
-                passwordError={passwordError}
-                onEmailError={setEmailError}
-                onPasswordError={setPasswordError}
-              />
-            ))}
+            selectedRole === "PACIENTE")) && (
+          <RegisterPaciente
+            username={username}
+            onUsernameChange={setUsername}
+            email={email}
+            onEmailChange={setEmail}
+            password={password}
+            onPasswordChange={setPassword}
+            confirmPassword={confirmPassword}
+            onConfirmPasswordChange={setConfirmPassword}
+            emailError={emailError}
+            passwordError={passwordError}
+            onEmailError={setEmailError}
+            onPasswordError={setPasswordError}
+          />
+        )}
       </form>
       {!localStorage.getItem("loggedInUser") && (
         <p className="text-center mt-4">

@@ -30,19 +30,19 @@ export function AdminDashboard({
         <h2 className="text-lg font-bold">Panel de Administrador</h2>
         <nav>
           <Link
-            to="user-management"
+            to="gestion-usuarios"
             className="bg-gray-200 hover:cursor-pointer hover:bg-gray-300 p-4 rounded-md block shadow-sm mb-2"
           >
             Gestión de Usuarios
           </Link>
           <Link
-            to="register"
+            to="registro"
             className="bg-gray-200 hover:cursor-pointer hover:bg-gray-300 p-4 rounded-md block shadow-sm mb-2"
           >
             Registrar Usuarios
           </Link>
           <Link
-            to="reports"
+            to="reportes"
             className="bg-gray-200 hover:cursor-pointer hover:bg-gray-300 p-4 rounded-md block shadow-sm mb-2"
           >
             Reportes

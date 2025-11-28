@@ -55,7 +55,7 @@ export function App() {
               }
             />
             <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/registro" element={<Register />} />
             <Route
               path="/reset-password"
               element={
@@ -84,10 +84,10 @@ export function App() {
                   </React.Suspense>
                 }
               >
-                <Route path="user-management" element={<UserManagement />} />
-                <Route path="register" element={<Register />} />
+                <Route path="gestion-usuarios" element={<UserManagement />} />
+                <Route path="registro" element={<Register />} />
                 <Route
-                  path="reports"
+                  path="reportes"
                   element={
                     <div className="p-4">Reportes (en construcción)</div>
                   }
@@ -104,7 +104,7 @@ export function App() {
                 }
               >
                 <Route
-                  path="profile"
+                  path="perfil"
                   element={
                     <Profile
                       users={users}
@@ -136,13 +136,17 @@ export function App() {
                 }
               >
                 <Route
-                  path="appointments"
+                  path="citas"
                   element={
-                    <Citas citas={initialCitas} />
+                    <Citas 
+                      citas={initialCitas} 
+                      pacientes={pacientes} 
+                      doctors={doctors}
+                    />
                   }
                 />
                 <Route
-                  path="medical-records"
+                  path="historial-medico"
                   element={
                     <div className="p-4">
                       Mi Historial Médico (en construcción)
@@ -150,7 +154,7 @@ export function App() {
                   }
                 />
                 <Route
-                  path="profile"
+                  path="perfil"
                   element={
                     <Profile
                       users={users}

@@ -100,7 +100,7 @@ export function LoginForm({ users, pacientes, doctors, admins }: LoginFormProps)
       </form>
       <p className="text-center mt-4">
         ¿No tienes una cuenta?{" "}
-        <Link to="/register" className="text-blue-600 hover:underline">
+        <Link to="/registro" className="text-blue-600 hover:underline">
           Crear una cuenta nueva
         </Link>
       </p>

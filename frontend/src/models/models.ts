@@ -7,6 +7,13 @@ export interface User {
   active?: boolean;
 }
 
+export interface HistorialMedico {
+  fecha: string;
+  descripcion: string;
+  tipo: string;
+  notas?: string;
+}
+
 export interface Paciente {
   nombre: string;
   apellido: string;
@@ -15,7 +22,7 @@ export interface Paciente {
   genero: string;
   telefono: string;
   direccion: string;
-  historial_medico?: string;
+  historial_medico?: HistorialMedico[];
 }
 
 export interface Doctor {
@@ -57,5 +64,5 @@ export type ExtendedUser = User & {
   telefono?: string;
   direccion?: string;
   especialidad?: string;
-  historial_medico?: string;
+  historial_medico?: HistorialMedico[];
 };

@@ -63,7 +63,11 @@ export const pacientes: Paciente[] = [
         fecha_nacimiento: '1990-01-01',
         genero: 'Masculino',
         telefono: '123456789',
-        direccion: 'Calle Falsa 123'
+        direccion: 'Calle Falsa 123',
+        historial_medico: [
+            { fecha: '2023-01-15', descripcion: 'Consulta general', tipo: 'General', notas: 'Paciente en buen estado' },
+            { fecha: '2023-03-22', descripcion: 'Dolor de cabeza', tipo: 'Neurología', notas: 'Prescripción de analgésicos' }
+        ]
     },
     {
         nombre: 'María',
@@ -72,7 +76,10 @@ export const pacientes: Paciente[] = [
         fecha_nacimiento: '1992-02-02',
         genero: 'Femenino',
         telefono: '987654321',
-        direccion: 'Avenida Siempre Viva 456'
+        direccion: 'Avenida Siempre Viva 456',
+        historial_medico: [
+            { fecha: '2023-02-10', descripcion: 'Revisión anual', tipo: 'General', notas: 'Recomendaciones de salud' }
+        ]
     },
     {
         nombre: 'Carlos',
@@ -81,7 +88,8 @@ export const pacientes: Paciente[] = [
         fecha_nacimiento: '1994-03-03',
         genero: 'Masculino',
         telefono: '555555555',
-        direccion: 'Boulevard Central 789'
+        direccion: 'Boulevard Central 789',
+        historial_medico: []
     },
     {
         nombre: 'Ana',
@@ -90,7 +98,11 @@ export const pacientes: Paciente[] = [
         fecha_nacimiento: '1996-04-04',
         genero: 'Femenino',
         telefono: '444444444',
-        direccion: 'Calle Luna 101'
+        direccion: 'Calle Luna 101',
+        historial_medico: [
+            { fecha: '2023-04-05', descripcion: 'Alergia estacional', tipo: 'Alergología', notas: 'Prescripción de antihistamínicos' },
+            { fecha: '2023-05-12', descripcion: 'Dolor de garganta', tipo: 'Otorrinolaringología', notas: 'Recomendación de reposo y líquidos' }
+        ]
     }
 ];
 

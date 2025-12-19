@@ -79,6 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               genero: p.genero,
               telefono: p.telefono,
               direccion: p.direccion,
+              historial_medico: p.historial_medico,
             };
           }
           break;

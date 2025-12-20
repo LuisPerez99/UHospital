@@ -3,6 +3,7 @@ import Avatar from "boring-avatars";
 import { EditUserModal } from "./EditUserModal";
 import { useState } from "react";
 import { BsPencilFill } from "react-icons/bs";
+import { Link } from "react-router";
 
 import type {
   User,
@@ -172,12 +173,12 @@ export function Profile({
           >
             <BsPencilFill className="inline mr-2" /> Editar Perfil
           </button>
-          <button
+          <Link
             className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
-            onClick={() => alert("Funcionalidad de cambio de contraseña")}
+            to="/reset-password"
           >
             <BsPencilFill className="inline mr-2" /> Cambiar Contraseña
-          </button>
+          </Link>
         </div>
         {editingUser && (
           <EditUserModal

@@ -18,6 +18,8 @@ import type { User, Paciente, Doctor, Admin } from "./models/models";
 import { Profile } from "./components/Profile";
 import { Citas } from "./components/Citas";
 import { HistorialMedico } from "./components/HistorialMedico";
+import { ResetPassword } from "./pages/ResetPassword";
+import { Spinner } from "./components/Spinner";
 
 const AdminDashboard = React.lazy(() =>
   import("./pages/AdminDashboard").then((m) => ({ default: m.AdminDashboard }))
@@ -59,18 +61,14 @@ export function App() {
             <Route path="/registro" element={<Register />} />
             <Route
               path="/reset-password"
-              element={
-                <div className="p-4">
-                  Página de restablecimiento de contraseña (en construcción)
-                </div>
-              }
+              element={<ResetPassword />}
             />
             <Route path="/dashboard">
               <Route
                 path="admin"
                 element={
                   <React.Suspense
-                    fallback={<div>Cargando panel de administrador...</div>}
+                    fallback={<Spinner />}
                   >
                     <AdminDashboard
                       users={users}
@@ -98,7 +96,7 @@ export function App() {
                 path="doctor/*"
                 element={
                   <React.Suspense
-                    fallback={<div>Cargando panel de doctor...</div>}
+                    fallback={<Spinner />}
                   >
                     <SPDoctor />
                   </React.Suspense>
@@ -130,7 +128,7 @@ export function App() {
                 path="paciente/*"
                 element={
                   <React.Suspense
-                    fallback={<div>Cargando panel de paciente...</div>}
+                    fallback={<Spinner />}
                   >
                     <PacienteDashboard />
                   </React.Suspense>

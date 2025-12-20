@@ -5,21 +5,17 @@ interface HistorialMedicoProps {}
 export function HistorialMedico() {
   const { user } = useAuth();
 
-  const printUser = () => {
-    console.log(user);
-  };
-
   return (
     <>
       <div className="mb-4 p-4 bg-gray-100 rounded shadow-md">
         <h2 className="text-2xl font-bold">Mis Historial Médico</h2>
       </div>
       <div className="mb-4 p-4 flex bg-white rounded shadow-md gap-4">
-        <h2 onClick={printUser} >Filtros</h2>
+        <h2>Filtros</h2>
       </div>
       <div className="p-4 flex flex-col gap-4 rounded shadow-md">
-        {user?.historial_medico?.length === 0 ? (
-          <p>No hay registros en el historial médico.</p>
+        { !user?.historial_medico || user?.historial_medico?.length === 0 ? (
+          <p className="text-gray-600">No hay registros en el historial médico.</p>
         ) : (
           <table className="min-w-full bg-white border border-gray-300">
             <thead>

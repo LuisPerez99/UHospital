@@ -1,51 +1,55 @@
-import { Link } from "react-router";
-import { useConfig } from "../contexts/ConfigContext";
+import { Link, useNavigate } from "react-router";
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import type { User, Paciente, Doctor, Admin } from "../models/models";
+import { useAuth } from "../contexts/AuthContext";
 
-export function LoginForm() {
-  const { baseURL } = useConfig();
+interface LoginFormProps {
+  users: User[];
+  pacientes: Paciente[];
+  doctors: Doctor[];
+  admins: Admin[];
+}
+
+export function LoginForm({ users, pacientes, doctors, admins }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
+  const [loginError, setLoginError] = useState(false);
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { login, user, authenticate } = useAuth();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
-      const response = await fetch(`${baseURL}/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-      if (response.ok) {
-        alert("Inicio de sesión exitoso");
-        // Guardar el token en el almacenamiento local
-        const data = await response.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("tokenExp", data.expires_at);
-        localStorage.setItem("userRole", data.role);
-        localStorage.setItem("userEmail", data.email);
-        // Redirigir al usuario a la página principal u otra página protegida
-        window.location.href = "/";
+      const foundUser = authenticate(email, password, users, pacientes, doctors, admins);
+      if (foundUser && (foundUser.active ?? true)) {
+        login(foundUser);
       } else {
-        response.json().then((data) => {
-          if (data.error) {
-            alert(`Error en el inicio de sesión: ${data.error}`);
-          } else {
-            alert("Error en el inicio de sesión");
-          }
-        });
+        setLoginError(true);
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === "ADMIN") {
+        navigate("/dashboard/admin");
+        return;
+      }
+      if (user.role === "DOCTOR") {
+        navigate("/dashboard/doctor");
+        return;
+      }
+      if (user.role === "PACIENTE") {
+        navigate("/dashboard/paciente");
+        return;
+      }
+    }
+  }, [user, navigate]);
 
   return (
     <>
@@ -58,7 +62,7 @@ export function LoginForm() {
           <input
             type="email"
             id="email"
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className={`w-full px-3 py-2 border ${loginError ? "border-red-500 text-red-700" : "border-gray-300"} rounded`}
             placeholder="Ingrese su correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -72,7 +76,7 @@ export function LoginForm() {
             <input
               type={showPassword ? "text" : "password"}
               id="password"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={`w-full px-3 py-2 border ${loginError ? "border-red-500 text-red-700" : "border-gray-300"} rounded`}
               placeholder="Ingrese su contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -80,7 +84,7 @@ export function LoginForm() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className={`absolute right-2 top-1/2 -translate-y-1/2 ${loginError ? "text-red-700" : "text-gray-500"} hover:${loginError ? "text-red-700" : "text-gray-700"}`}
             >
               {showPassword ? <BsEyeSlashFill /> : <BsEyeFill />}
             </button>
@@ -96,7 +100,7 @@ export function LoginForm() {
       </form>
       <p className="text-center mt-4">
         ¿No tienes una cuenta?{" "}
-        <Link to="/register" className="text-blue-600 hover:underline">
+        <Link to="/registro" className="text-blue-600 hover:underline">
           Crear una cuenta nueva
         </Link>
       </p>
@@ -106,6 +110,11 @@ export function LoginForm() {
           Restablecer contraseña
         </Link>
       </p>
+      {loginError && (
+        <div className="max-w-md mx-auto mt-4 p-4 border border-red-500 bg-red-100 text-red-700 rounded">
+          Correo electrónico o contraseña incorrectos, o la cuenta está inactiva.
+        </div>
+      )}
     </>
   );
 }

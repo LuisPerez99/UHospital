@@ -1,10 +1,17 @@
-import { useConfig } from "../contexts/ConfigContext";
+// import { useConfig } from "../contexts/ConfigContext";
 import { useState } from "react";
 import type { User, Doctor } from "../models/models";
+import { users, doctors } from "../data/users";
 
 interface RegisterDoctorProps {
-  user: User;
+  username: string;
+  onUsernameChange: (username: string) => void;
+  email: string;
+  onEmailChange: (email: string) => void;
+  password: string;
+  onPasswordChange: (password: string) => void;
   confirmPassword: string;
+  onConfirmPasswordChange: (confirmPassword: string) => void;
   emailError?: boolean;
   passwordError?: boolean;
   onEmailError?: (hasError: boolean) => void;
@@ -12,18 +19,27 @@ interface RegisterDoctorProps {
 }
 
 export function RegisterDoctor({
-  user,
+  username,
+  onUsernameChange,
+  email,
+  onEmailChange,
+  password,
+  onPasswordChange,
   confirmPassword,
+  onConfirmPasswordChange,
   emailError,
   passwordError,
   onEmailError,
   onPasswordError,
 }: RegisterDoctorProps) {
-  const { baseURL } = useConfig();
+  // const { baseURL } = useConfig();
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [especialidad, setEspecialidad] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [fechaNacimiento, setFechaNacimiento] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [genero, setGenero] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,6 +47,14 @@ export function RegisterDoctor({
     setErrorMessage("");
     onEmailError?.(false);
     onPasswordError?.(false);
+
+    const user: User = {
+      id: users.length + 1,
+      username: username,
+      email: email,
+      password: password,
+      role: "DOCTOR",
+    };
 
     if (user.password !== confirmPassword) {
       setErrorMessage("Las contraseñas no coinciden");
@@ -44,33 +68,37 @@ export function RegisterDoctor({
       especialidad: especialidad,
       email: user.email,
       telefono: telefono,
+      fecha_nacimiento: fechaNacimiento,
+      direccion: direccion,
+      genero: genero,
     };
 
     try {
-      const response = await fetch(`${baseURL}/users/register/doctor`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: user,
-          doctor: doctor,
-        }),
-      });
-      if (response.status === 409) {
-        setErrorMessage("El correo electrónico ya está en uso");
+      const existingUser = users.find((u) => u.email === user.email);
+      if (existingUser) {
+        setErrorMessage("El correo electrónico ya está registrado");
         onEmailError?.(true);
         return;
       }
 
-      if (!response.ok) {
-        throw new Error("Error en el registro del médico");
-      }
+      users.push(user);
+      doctors.push(doctor);
 
-      // Manejar respuesta exitosa
-      const data = await response.json();
-      alert(`Médico ${data.username} registrado exitosamente`);
-      window.location.reload();
+      alert("Médico registrado exitosamente");
+
+      onUsernameChange("");
+      onEmailChange("");
+      onPasswordChange("");
+
+      setNombre("");
+      setApellido("");
+      setEspecialidad("");
+      setTelefono("");
+      setErrorMessage("");
+      onEmailError?.(false);
+      onPasswordError?.(false);
+      onConfirmPasswordChange("");
+      
     } catch (error) {
       console.error(error);
       setErrorMessage("Ocurrió un error inesperado. Intente nuevamente");
@@ -129,6 +157,47 @@ export function RegisterDoctor({
           placeholder="Ingrese el teléfono del médico"
           value={telefono}
           onChange={(e) => setTelefono(e.target.value)}
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 mb-2" htmlFor="fecha_nacimiento">
+          Fecha de Nacimiento
+        </label>
+        <input
+          type="date"
+          id="fecha_nacimiento"
+          className="w-full px-3 py-2 border border-gray-300 rounded"
+          placeholder="Ingrese la fecha de nacimiento del médico"
+          value={fechaNacimiento}
+          onChange={(e) => setFechaNacimiento(e.target.value)}
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 mb-2" htmlFor="genero">
+          <select
+            id="genero"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+            value={genero}
+            onChange={(e) => setGenero(e.target.value)}
+          >
+            <option value="">Seleccione el género</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </label>
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 mb-2" htmlFor="direccion">
+          Dirección
+        </label>
+        <input
+          type="text"
+          id="direccion"
+          className="w-full px-3 py-2 border border-gray-300 rounded"
+          placeholder="Ingrese la dirección del médico"
+          value={direccion}
+          onChange={(e) => setDireccion(e.target.value)}
         />
       </div>
       {errorMessage && (

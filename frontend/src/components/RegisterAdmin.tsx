@@ -1,9 +1,16 @@
-import { useConfig } from "../contexts/ConfigContext";
+// import { useConfig } from "../contexts/ConfigContext";
 import { useState } from "react";
 import type { User, Admin } from "../models/models";
+import { users, admins } from "../data/users";
 
 interface RegisterAdminProps {
-  user: User;
+  username: string;
+  onUsernameChange: (username: string) => void;
+  email: string;
+  onEmailChange: (email: string) => void;
+  password: string;
+  onPasswordChange: (password: string) => void;
+  onConfirmPasswordChange: (confirmPassword: string) => void;
   confirmPassword: string;
   emailError?: boolean;
   passwordError?: boolean;
@@ -12,17 +19,26 @@ interface RegisterAdminProps {
 }
 
 export function RegisterAdmin({
-  user,
+  username,
+  onUsernameChange,
+  email,
+  onEmailChange,
+  password,
+  onPasswordChange,
   confirmPassword,
+  onConfirmPasswordChange,
   emailError,
   passwordError,
   onEmailError,
   onPasswordError,
 }: RegisterAdminProps) {
-  const { baseURL } = useConfig();
+  // const { baseURL } = useConfig();
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [fechaNacimiento, setFechaNacimiento] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [genero, setGenero] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,43 +46,65 @@ export function RegisterAdmin({
     setErrorMessage("");
     onEmailError?.(false);
     onPasswordError?.(false);
+    
+    const user: User = {
+      id: users.length + 1,
+      username: username,
+      email: email,
+      password: password,
+      role: "ADMIN",
+    };
 
-    if (user.password !== confirmPassword) {
+    if (password !== confirmPassword) {
       setErrorMessage("Las contraseñas no coinciden");
       onPasswordError?.(true);
       return;
     }
+
 
     const admin: Admin = {
       nombre: nombre,
       apellido: apellido,
       email: user.email,
       telefono: telefono,
+      fecha_nacimiento: fechaNacimiento,
+      direccion: direccion,
+      genero: genero,
     };
 
     try {
-      const response = await fetch(`${baseURL}/users/register/admin`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: user,
-          administrador: admin,
-        }),
-      });
-      if (response.status === 409) {
-        setErrorMessage("El correo electrónico ya está en uso");
+      const existingUser = users.find((u) => u.email === user.email);
+      if (existingUser) {
+        setErrorMessage("El correo electrónico ya está registrado");
         onEmailError?.(true);
         return;
       }
-      if (!response.ok) {
-        throw new Error("Error al registrar administrador");
-      }
-      // Manejar respuesta exitosa
-      const data = await response.json();
-      alert(`Administrador ${data.username} registrado exitosamente`);
-      window.location.reload();
+
+      users.push({
+        id: users.length + 1,
+        username: user.username,
+        email: user.email,
+        password: user.password,
+        role: "ADMIN",
+      });
+
+      admins.push(admin);
+
+      alert("Administrador registrado exitosamente");
+      
+      setNombre("");
+      setApellido("");
+      setTelefono("");
+      setErrorMessage("");
+      onEmailError?.(false);
+      onPasswordError?.(false);
+      onUsernameChange("");
+      onEmailChange("");
+      onPasswordChange("");
+      onConfirmPasswordChange("");
+      admins.forEach(admin => {
+        console.log(`Administrador: ${admin.nombre} ${admin.apellido}, Email: ${admin.email}, Teléfono: ${admin.telefono}`);
+      });
     } catch (error) {
       console.error(error);
       setErrorMessage("Ocurrió un error inespaerado. Intente nuevamente");
@@ -112,6 +150,47 @@ export function RegisterAdmin({
             placeholder="Ingrese el teléfono del administrador"
             value={telefono}
             onChange={(e) => setTelefono(e.target.value)}
+            />
+        </div>
+        <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="fecha_nacimiento">
+            Fecha de Nacimiento
+            </label>
+            <input
+            type="date"
+            id="fecha_nacimiento"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+            value={fechaNacimiento}
+            onChange={(e) => setFechaNacimiento(e.target.value)}
+            />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="genero">
+            Género
+            <select
+              id="genero"
+              className="w-full px-3 py-2 border border-gray-300 rounded"
+              value={genero}
+              onChange={(e) => setGenero(e.target.value)}
+            >
+              <option value="">Seleccione el género</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </label>
+        </div>
+        <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="direccion">
+            Dirección
+            </label>
+            <input
+            type="text"
+            id="direccion"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+            placeholder="Ingrese la dirección del administrador"
+            value={direccion}
+            onChange={(e) => setDireccion(e.target.value)}
             />
         </div>
         {errorMessage && (

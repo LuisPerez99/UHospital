@@ -13,12 +13,9 @@ export function RegisterForm() {
   const [passwordError, setPasswordError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [user, setUser] = useState<User>({
-    username: "",
-    email: "",
-    password: "",
-    role: selectedRole,
-  });
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
 
   return (
     <>
@@ -33,8 +30,8 @@ export function RegisterForm() {
             id="username"
             className="w-full px-3 py-2 border border-gray-300 rounded"
             placeholder="Ingrese su nombre de usuario"
-            value={user.username}
-            onChange={(e) => setUser({ ...user, username: e.target.value })}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div className="mb-4">
@@ -48,8 +45,8 @@ export function RegisterForm() {
               emailError ? "border-red-500 text-red-700" : "border-gray-300"
             }`}
             placeholder="Ingrese su correo electrónico"
-            value={user.email}
-            onChange={(e) => setUser({ ...user, email: e.target.value })}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="mb-4">
@@ -66,8 +63,8 @@ export function RegisterForm() {
                   : "border-gray-300"
               }`}
               placeholder="Ingrese su contraseña"
-              value={user.password}
-              onChange={(e) => setUser({ ...user, password: e.target.value })}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button
               type="button"
@@ -104,48 +101,76 @@ export function RegisterForm() {
             </button>
           </div>
         </div>
-        {localStorage.getItem("userRole") === "ADMIN" && (
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="role">
-              Rol
-            </label>
-            <select
-              id="role"
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            >
-              <option value="DOCTOR">Doctor</option>
-              <option value="ADMIN">Administrador</option>
-            </select>
-          </div>
-        )}
-        {localStorage.getItem("userRole") === "ADMIN" &&
+        {localStorage.getItem("loggedInUser") &&
+          JSON.parse(localStorage.getItem("loggedInUser") || "{}").role ===
+            "ADMIN" && (
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-2" htmlFor="role">
+                Rol
+              </label>
+              <select
+                id="role"
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded"
+              >
+                <option value="DOCTOR">Doctor</option>
+                <option value="ADMIN">Administrador</option>
+                <option value="PACIENTE">Paciente</option>
+              </select>
+            </div>
+          )}
+        {localStorage.getItem("loggedInUser") &&
+          JSON.parse(localStorage.getItem("loggedInUser") || "{}").role ===
+            "ADMIN" &&
           selectedRole === "DOCTOR" && (
             <RegisterDoctor
-              user={user}
+              username={username}
+              onUsernameChange={setUsername}
+              email={email}
+              onEmailChange={setEmail}
+              password={password}
+              onPasswordChange={setPassword}
               confirmPassword={confirmPassword}
+              onConfirmPasswordChange={setConfirmPassword}
               emailError={emailError}
               passwordError={passwordError}
               onEmailError={setEmailError}
               onPasswordError={setPasswordError}
             />
           )}
-        {localStorage.getItem("userRole") === "ADMIN" &&
+        {localStorage.getItem("loggedInUser") &&
+          JSON.parse(localStorage.getItem("loggedInUser") || "{}").role ===
+            "ADMIN" &&
           selectedRole === "ADMIN" && (
             <RegisterAdmin
-              user={user}
+              username={username}
+              onUsernameChange={setUsername}
+              email={email}
+              onEmailChange={setEmail}
+              password={password}
+              onPasswordChange={setPassword}
               confirmPassword={confirmPassword}
+              onConfirmPasswordChange={setConfirmPassword}
               emailError={emailError}
               passwordError={passwordError}
               onEmailError={setEmailError}
               onPasswordError={setPasswordError}
             />
           )}
-        {localStorage.getItem("userRole") !== "ADMIN" && (
+        {(!localStorage.getItem("loggedInUser") ||
+          (JSON.parse(localStorage.getItem("loggedInUser") || "{}").role ===
+            "ADMIN" &&
+            selectedRole === "PACIENTE")) && (
           <RegisterPaciente
-            user={user}
+            username={username}
+            onUsernameChange={setUsername}
+            email={email}
+            onEmailChange={setEmail}
+            password={password}
+            onPasswordChange={setPassword}
             confirmPassword={confirmPassword}
+            onConfirmPasswordChange={setConfirmPassword}
             emailError={emailError}
             passwordError={passwordError}
             onEmailError={setEmailError}
@@ -153,12 +178,21 @@ export function RegisterForm() {
           />
         )}
       </form>
-      <p className="text-center mt-4">
-        ¿Ya tienes una cuenta?{" "}
-        <Link to="/login" className="text-blue-600 hover:underline">
-          Iniciar Sesión
-        </Link>
-      </p>
+      {!localStorage.getItem("loggedInUser") && (
+        <p className="text-center mt-4">
+          ¿Ya tienes una cuenta?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Iniciar Sesión
+          </Link>
+        </p>
+      )}
+
+      {emailError || passwordError ? (
+        <div className="max-w-md mx-auto mt-4 p-4 border border-red-500 bg-red-100 text-red-700 rounded">
+          {emailError && <p>El correo electrónico ya está en uso.</p>}
+          {passwordError && <p>Las contraseñas no coinciden.</p>}
+        </div>
+      ) : null}
     </>
   );
 }

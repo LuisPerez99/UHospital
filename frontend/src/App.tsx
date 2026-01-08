@@ -29,8 +29,8 @@ const PacienteDashboard = React.lazy(() =>
     default: m.PacienteDashboard,
   }))
 );
-const SPDoctor = React.lazy(() =>
-  import("./components/SPDoctor").then((m) => ({ default: m.SPDoctor }))
+const DoctorDashboard = React.lazy(() =>
+  import("./pages/DoctorDashboard").then((m) => ({ default: m.DoctorDashboard }))
 );
 
 // import './App.css'
@@ -98,7 +98,7 @@ export function App() {
                   <React.Suspense
                     fallback={<Spinner />}
                   >
-                    <SPDoctor />
+                    <DoctorDashboard />
                   </React.Suspense>
                 }
               >

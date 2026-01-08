@@ -1,4 +1,4 @@
-Enter password: 
+ 
 -- MySQL dump 10.13  Distrib 9.4.0, for Linux (x86_64)
 --
 -- Host: localhost    Database: UHospital

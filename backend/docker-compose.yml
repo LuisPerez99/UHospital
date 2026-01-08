@@ -11,7 +11,7 @@ services:
       - PORT=${PORT}
       - ORIGIN_PORT=${ORIGIN_PORT}
       - HOSTNAME=${HOSTNAME}
-      - DB_HOST=ayd1f2
+      - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
@@ -21,7 +21,35 @@ services:
       - /home/pdrpm:/app/data
     networks:
       - uhospital_backend
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    build:
+      context: ./src/db
+      dockerfile: Dockerfile
+    container_name: uhospital_db
+    restart: unless-stopped
+    environment:
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - uhospital_backend
+    healthcheck:
+        test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p${DB_PASSWORD} || exit 1"]
+        interval: 5s
+        timeout: 10s
+        retries: 5
+        start_period: 30s
 networks:
   uhospital_backend:
-    external: true
-    name: uhospital_backend_network
+    name: uhospital_backend
+volumes:
+  db_data:
+    name: uhospital_db_data_volume

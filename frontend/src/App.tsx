@@ -93,7 +93,7 @@ export function App() {
                 />
               </Route>
               <Route
-                path="doctor/*"
+                path="doctor"
                 element={
                   <React.Suspense
                     fallback={<Spinner />}
@@ -102,6 +102,16 @@ export function App() {
                   </React.Suspense>
                 }
               >
+                <Route
+                  path="citas"
+                  element={
+                    <Citas
+                      citas={initialCitas}
+                      pacientes={pacientes}
+                      doctors={doctors}
+                    />
+                  }
+                />
                 <Route
                   path="perfil"
                   element={

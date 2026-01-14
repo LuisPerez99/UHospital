@@ -11,22 +11,22 @@ export function DoctorDashboard() {
         <h2 className="text-lg font-bold">Panel de Doctor</h2>
         <nav>
           <Link
-            to="gestion-usuarios"
+            to="citas"
             className="bg-gray-200 hover:cursor-pointer hover:bg-gray-300 p-4 rounded-md block shadow-sm mb-2"
           >
-            Gestión de Usuarios
-          </Link>
-          <Link
-            to="registro"
-            className="bg-gray-200 hover:cursor-pointer hover:bg-gray-300 p-4 rounded-md block shadow-sm mb-2"
-          >
-            Registrar Usuarios
+            Citas
           </Link>
           <Link
             to="reportes"
             className="bg-gray-200 hover:cursor-pointer hover:bg-gray-300 p-4 rounded-md block shadow-sm mb-2"
           >
             Reportes
+          </Link>
+          <Link
+            to="perfil"
+            className="bg-gray-200 hover:cursor-pointer hover:bg-gray-300 p-4 rounded-md block shadow-sm mb-2"
+          >
+            Mi Perfil
           </Link>
         </nav>
         <div className="mt-4 text-sm text-gray-600">
@@ -37,5 +37,5 @@ export function DoctorDashboard() {
         <Outlet />
       </div>
     </div>
-  )
+  );
 }

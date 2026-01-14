@@ -197,10 +197,12 @@ export function Citas({ citas, pacientes, doctors }: CitasProps) {
                     title={
                       user?.role !== "PACIENTE" ? "Información de contacto" : ""
                     }
-                    onClick={() => {
+                    onClick={
+                      user?.role !== "PACIENTE" ? () => {
                       setIsModalOpen(true);
                       setClickedEmail(cita.pacienteEmail);
-                    }}
+                    } : undefined
+                    }
                     style={
                       user?.role !== "PACIENTE" ? { cursor: "pointer" } : {}
                     }
@@ -216,11 +218,15 @@ export function Citas({ citas, pacientes, doctors }: CitasProps) {
                     title={
                       user?.role !== "DOCTOR" ? "Información de contacto" : ""
                     }
-                    onClick={() => {
+                    onClick={
+                      user?.role !== "DOCTOR" ? () => {
                       setIsModalOpen(true);
                       setClickedEmail(cita.doctorEmail);
-                    }}
-                    style={{ cursor: "pointer" }}
+                    } : undefined
+                    }
+                    style={
+                      user?.role !== "DOCTOR" ? { cursor: "pointer" } : {}
+                    }
                   >
                     {cita.doctorEmail}
                   </td>

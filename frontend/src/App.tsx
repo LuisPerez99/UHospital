@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { NavBar } from "./components/NavBar";
+import { Footer } from "./components/Footer";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { Register } from "./pages/Register";
@@ -30,7 +31,9 @@ const PacienteDashboard = React.lazy(() =>
   }))
 );
 const DoctorDashboard = React.lazy(() =>
-  import("./pages/DoctorDashboard").then((m) => ({ default: m.DoctorDashboard }))
+  import("./pages/DoctorDashboard").then((m) => ({
+    default: m.DoctorDashboard,
+  }))
 );
 
 // import './App.css'
@@ -43,7 +46,7 @@ export function App() {
   return (
     <AuthProvider>
       <ConfigProvider>
-        <div className="App">
+        <div className="App min-h-screen flex flex-col">
           <NavBar />
           <Routes>
             <Route
@@ -59,17 +62,12 @@ export function App() {
             />
             <Route path="/" element={<Home />} />
             <Route path="/registro" element={<Register />} />
-            <Route
-              path="/reset-password"
-              element={<ResetPassword />}
-            />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard">
               <Route
                 path="admin"
                 element={
-                  <React.Suspense
-                    fallback={<Spinner />}
-                  >
+                  <React.Suspense fallback={<Spinner />}>
                     <AdminDashboard
                       users={users}
                       setUsers={setUsers}
@@ -95,9 +93,7 @@ export function App() {
               <Route
                 path="doctor"
                 element={
-                  <React.Suspense
-                    fallback={<Spinner />}
-                  >
+                  <React.Suspense fallback={<Spinner />}>
                     <DoctorDashboard />
                   </React.Suspense>
                 }
@@ -137,9 +133,7 @@ export function App() {
               <Route
                 path="paciente/*"
                 element={
-                  <React.Suspense
-                    fallback={<Spinner />}
-                  >
+                  <React.Suspense fallback={<Spinner />}>
                     <PacienteDashboard />
                   </React.Suspense>
                 }
@@ -181,6 +175,9 @@ export function App() {
               />
             </Route>
           </Routes>
+        </div>
+        <div className="mt-8">
+          <Footer />
         </div>
       </ConfigProvider>
     </AuthProvider>

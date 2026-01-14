@@ -67,7 +67,7 @@ export function NavBar() {
                 variant="beam"
                 colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
               />
-              <span className="mr-4">Hola, {user.username}</span>
+              <span className="mr-4">{user.nombre?.split(" ")[0] + " " + user.apellido?.split(" ")[0]}</span>
               <button
                 onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:scale-105"

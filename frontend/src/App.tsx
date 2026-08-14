@@ -86,7 +86,7 @@ export function App() {
                 <Route
                   path="reportes"
                   element={
-                    <div className="p-4">Reportes (en construcción)</div>
+                    <div className="p-4">Reportes</div>
                   }
                 />
               </Route>

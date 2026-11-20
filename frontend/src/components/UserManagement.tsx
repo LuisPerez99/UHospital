@@ -10,6 +10,7 @@ import type {
 } from "../models/models";
 import { EditUserModal } from "./EditUserModal";
 import { ViewUserModal } from "./ViewUserModal";
+import { ConfirmDialog } from "./ConfirmDialog";
 import { useAuth } from "../contexts/AuthContext";
 
 interface UserManagementContext {
@@ -37,6 +38,9 @@ export function UserManagement() {
   const [filter, setFilter] = useState("all");
   const [editingUser, setEditingUser] = useState<ExtendedUser | null>(null);
   const [viewingUser, setViewingUser] = useState<User | null>(null);
+  const [pendingAction, setPendingAction] = useState<
+    { type: "delete" | "deactivate"; user: User } | null
+  >(null);
   const [activeFilter, setActiveFilter] = useState("all");
 
   const handleActiveFilterChange = (
@@ -45,7 +49,9 @@ export function UserManagement() {
     setActiveFilter(e.target.value);
   };
 
-  const { user } = useAuth();
+  const { user: currentUser } = useAuth();
+
+  const isCurrentUser = (target: User) => currentUser?.id === target.id;
 
   const buildExtendedUser = (
     user: User,
@@ -148,20 +154,48 @@ export function UserManagement() {
         break;
     }
 
-    if (user && user.id === updated.id) {
-      user.username = updated.username;
-      user.email = updated.email;
+    if (currentUser && currentUser.id === updated.id) {
+      currentUser.username = updated.username;
+      currentUser.email = updated.email;
     }
 
     setEditingUser(null);
   };
 
   const handleActiveToggle = (userId: number) => {
+    if (currentUser?.id === userId) return;
     setData((prev) =>
       prev.map((user) =>
         user.id === userId ? { ...user, active: !(user.active ?? false) } : user
       )
     );
+  };
+
+  const requestDelete = (target: User) => {
+    if (isCurrentUser(target)) return;
+    setPendingAction({ type: "delete", user: target });
+  };
+
+  const requestActiveToggle = (target: User) => {
+    if (isCurrentUser(target)) return;
+    if (target.active) {
+      setPendingAction({ type: "deactivate", user: target });
+      return;
+    }
+    handleActiveToggle(target.id);
+  };
+
+  const confirmPendingAction = () => {
+    if (!pendingAction || isCurrentUser(pendingAction.user)) {
+      setPendingAction(null);
+      return;
+    }
+    if (pendingAction.type === "delete") {
+      setData((prev) => prev.filter((u) => u.id !== pendingAction.user.id));
+    } else {
+      handleActiveToggle(pendingAction.user.id);
+    }
+    setPendingAction(null);
   };
 
   return (
@@ -244,8 +278,10 @@ export function UserManagement() {
                 <td className="border border-gray-300 px-4 py-2 text-center align-middle">
                   <div className="inline-flex items-center gap-2">
                     <button
+                      type="button"
                       className="text-white bg-green-500 hover:bg-green-600 p-2"
                       title="Editar Usuario"
+                      aria-label="Editar Usuario"
                       onClick={() =>
                         setEditingUser(
                           buildExtendedUser(
@@ -260,17 +296,32 @@ export function UserManagement() {
                       <BsPencilFill />
                     </button>
                     <button
-                      className="text-white bg-red-500 hover:bg-red-600 p-2"
-                      title="Eliminar Usuario"
-                      onClick={() =>
-                        setData((prev) => prev.filter((u) => u.id !== user.id))
+                      type="button"
+                      className={`text-white p-2 ${
+                        isCurrentUser(user)
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-red-500 hover:bg-red-600"
+                      }`}
+                      title={
+                        isCurrentUser(user)
+                          ? "No puedes eliminar tu propia cuenta"
+                          : "Eliminar Usuario"
                       }
+                      aria-label={
+                        isCurrentUser(user)
+                          ? "No puedes eliminar tu propia cuenta"
+                          : "Eliminar Usuario"
+                      }
+                      disabled={isCurrentUser(user)}
+                      onClick={() => requestDelete(user)}
                     >
                       <BsTrashFill />
                     </button>
                     <button
+                      type="button"
                       className="text-white bg-blue-500 hover:bg-blue-600 p-2"
                       title="Ver Usuario"
+                      aria-label="Ver Usuario"
                       onClick={() => setViewingUser(user)}
                     >
                       <BsEyeFill />
@@ -280,9 +331,17 @@ export function UserManagement() {
                 <td className="border border-gray-300 px-4 py-2 text-center align-middle">
                   <label
                     htmlFor={`active-switch-${user.id}`}
-                    className="inline-flex items-center cursor-pointer"
+                    className={`inline-flex items-center ${
+                      isCurrentUser(user)
+                        ? "cursor-not-allowed opacity-60"
+                        : "cursor-pointer"
+                    }`}
                     title={
-                      user.active ? "Desactivar Usuario" : "Activar Usuario"
+                      isCurrentUser(user)
+                        ? "No puedes desactivar tu propia cuenta"
+                        : user.active
+                        ? "Desactivar Usuario"
+                        : "Activar Usuario"
                     }
                   >
                     <input
@@ -290,8 +349,9 @@ export function UserManagement() {
                       type="checkbox"
                       className="sr-only peer"
                       checked={!!user.active}
-                      onChange={() => handleActiveToggle(user.id)}
+                      onChange={() => requestActiveToggle(user)}
                       aria-label="Activo"
+                      disabled={isCurrentUser(user)}
                     />
                     <div
                       className="relative w-11 h-6 rounded-full bg-gray-300 transition-colors
@@ -329,6 +389,27 @@ export function UserManagement() {
             doctors={doctorsData}
             admins={adminsData}
             onClose={() => setViewingUser(null)}
+          />
+        )}
+
+        {pendingAction && (
+          <ConfirmDialog
+            title={
+              pendingAction.type === "delete"
+                ? "Eliminar Usuario"
+                : "Desactivar Usuario"
+            }
+            message={
+              pendingAction.type === "delete"
+                ? `¿Estás seguro de que deseas eliminar el usuario "${pendingAction.user.username}"? Esta acción no se puede deshacer.`
+                : `¿Deseas desactivar el usuario "${pendingAction.user.username}"? No podrá iniciar sesión hasta que la cuenta se vuelva a activar.`
+            }
+            confirmLabel={
+              pendingAction.type === "delete" ? "Eliminar" : "Desactivar"
+            }
+            tone="danger"
+            onConfirm={confirmPendingAction}
+            onClose={() => setPendingAction(null)}
           />
         )}
       </div>

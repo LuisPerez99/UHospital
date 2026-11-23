@@ -60,15 +60,24 @@ export function UserManagement() {
     pacientes: Paciente[]
   ): ExtendedUser => {
     switch (user.role) {
-      case "ADMIN":
+      case "ADMIN": {
         const admin = admins.find((a) => a.email === user.email);
-        return { ...user, ...(admin || {}) };
-      case "DOCTOR":
+        return admin
+          ? { ...user, ...admin, fechaNacimiento: admin.fecha_nacimiento }
+          : user;
+      }
+      case "DOCTOR": {
         const doctor = doctors.find((d) => d.email === user.email);
-        return { ...user, ...(doctor || {}) };
-      case "PACIENTE":
+        return doctor
+          ? { ...user, ...doctor, fechaNacimiento: doctor.fecha_nacimiento }
+          : user;
+      }
+      case "PACIENTE": {
         const paciente = pacientes.find((p) => p.email === user.email);
-        return { ...user, ...(paciente || {}) };
+        return paciente
+          ? { ...user, ...paciente, fechaNacimiento: paciente.fecha_nacimiento }
+          : user;
+      }
       default:
         return user;
     }

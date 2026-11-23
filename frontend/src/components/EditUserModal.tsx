@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import type { Paciente, Doctor, Admin, ExtendedUser } from "../models/models";
 import { BsXCircleFill } from "react-icons/bs";
+import { FieldError } from "./FieldError";
+import { inputClass, isFutureDate, todayISO } from "../utils/validation";
 
 interface EditUserModalProps {
   user: ExtendedUser;
@@ -11,6 +13,17 @@ interface EditUserModalProps {
   onClose: () => void;
 }
 
+type EditUserFieldErrors = {
+  username?: string;
+  nombre?: string;
+  apellido?: string;
+  fechaNacimiento?: string;
+  genero?: string;
+  telefono?: string;
+  direccion?: string;
+  especialidad?: string;
+};
+
 export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
   const [username, setUsername] = useState("");
   const [nombre, setNombre] = useState("");
@@ -20,21 +33,62 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
   const [especialidad, setEspecialidad] = useState("");
+  const [errors, setErrors] = useState<EditUserFieldErrors>({});
   const [isVisible, setIsVisible] = useState(false);
+
+  const isDoctor = user.role === "DOCTOR";
 
   useEffect(() => {
     setUsername(user.username ?? "");
-    setNombre((user as any).nombre ?? "");
-    setApellido((user as any).apellido ?? "");
-    setFechaNacimiento((user as any).fechaNacimiento ?? "");
-    setGenero((user as any).genero ?? "");
-    setTelefono((user as any).telefono ?? "");
-    setDireccion((user as any).direccion ?? "");
-    setEspecialidad((user as any).especialidad ?? "");
+    setNombre(user.nombre ?? "");
+    setApellido(user.apellido ?? "");
+    setFechaNacimiento(user.fechaNacimiento ?? "");
+    setGenero(user.genero ?? "");
+    setTelefono(user.telefono ?? "");
+    setDireccion(user.direccion ?? "");
+    setEspecialidad(user.especialidad ?? "");
+    setErrors({});
 
     // mostrar transición después de montar
     setTimeout(() => setIsVisible(true), 10);
   }, [user]);
+
+  const clearError = (field: keyof EditUserFieldErrors) => {
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
+  };
+
+  const validate = (): EditUserFieldErrors => {
+    const next: EditUserFieldErrors = {};
+
+    if (!username.trim()) {
+      next.username = "El nombre de usuario es obligatorio.";
+    }
+    if (!nombre.trim()) {
+      next.nombre = "El nombre es obligatorio.";
+    }
+    if (!apellido.trim()) {
+      next.apellido = "El apellido es obligatorio.";
+    }
+    if (!fechaNacimiento) {
+      next.fechaNacimiento = "La fecha de nacimiento es obligatoria.";
+    } else if (isFutureDate(fechaNacimiento)) {
+      next.fechaNacimiento = "La fecha de nacimiento no puede ser futura.";
+    }
+    if (!genero) {
+      next.genero = "Selecciona un género.";
+    }
+    if (!telefono.trim()) {
+      next.telefono = "El teléfono es obligatorio.";
+    }
+    if (!direccion.trim()) {
+      next.direccion = "La dirección es obligatoria.";
+    }
+    if (isDoctor && !especialidad.trim()) {
+      next.especialidad = "La especialidad es obligatoria.";
+    }
+
+    return next;
+  };
 
   const handleClose = () => {
     setIsVisible(false);
@@ -44,47 +98,51 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const nextErrors = validate();
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+
     let updated: ExtendedUser;
     switch (user.role) {
       case "ADMIN":
         updated = {
           ...user,
-          username,
-          nombre,
-          apellido,
+          username: username.trim(),
+          nombre: nombre.trim(),
+          apellido: apellido.trim(),
           fechaNacimiento,
           genero,
-          telefono,
-          direccion,
+          telefono: telefono.trim(),
+          direccion: direccion.trim(),
         };
         break;
       case "DOCTOR":
         updated = {
           ...user,
-          username,
-          nombre,
-          apellido,
+          username: username.trim(),
+          nombre: nombre.trim(),
+          apellido: apellido.trim(),
           fechaNacimiento,
           genero,
-          telefono,
-          direccion,
-          especialidad,
+          telefono: telefono.trim(),
+          direccion: direccion.trim(),
+          especialidad: especialidad.trim(),
         };
         break;
       case "PACIENTE":
         updated = {
           ...user,
-          username,
-          nombre,
-          apellido,
+          username: username.trim(),
+          nombre: nombre.trim(),
+          apellido: apellido.trim(),
           fechaNacimiento,
           genero,
-          telefono,
-          direccion,
+          telefono: telefono.trim(),
+          direccion: direccion.trim(),
         };
         break;
       default:
-        updated = { ...user, username };
+        updated = { ...user, username: username.trim() };
     }
 
     onSave(updated);
@@ -96,7 +154,6 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
         isVisible ? "opacity-100" : "opacity-0"
       }`}
       role="dialog"
-      style={{ backgroundColor: "rgba(0,0,0,0.5" }}
       aria-modal="true"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleClose();
@@ -106,6 +163,7 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
         className={`w-full max-w-md max-h-[90vh] mx-auto bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 flex flex-col ${
           isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
+        noValidate
         onSubmit={handleSubmit}
       >
         <div className="p-6 flex items-center justify-between">
@@ -135,11 +193,20 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             <input
               type="text"
               id="username"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={inputClass(!!errors.username)}
               placeholder="Ingrese el nombre de usuario"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                clearError("username");
+              }}
+              required
+              aria-invalid={!!errors.username}
+              aria-describedby={
+                errors.username ? "edit-username-error" : undefined
+              }
             />
+            <FieldError id="edit-username-error" message={errors.username} />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="nombre">
@@ -148,11 +215,20 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             <input
               type="text"
               id="nombre"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={inputClass(!!errors.nombre)}
               placeholder="Ingrese el nombre"
               value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
+              onChange={(e) => {
+                setNombre(e.target.value);
+                clearError("nombre");
+              }}
+              required
+              aria-invalid={!!errors.nombre}
+              aria-describedby={
+                errors.nombre ? "edit-nombre-error" : undefined
+              }
             />
+            <FieldError id="edit-nombre-error" message={errors.nombre} />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="apellido">
@@ -161,11 +237,20 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             <input
               type="text"
               id="apellido"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={inputClass(!!errors.apellido)}
               placeholder="Ingrese el apellido"
               value={apellido}
-              onChange={(e) => setApellido(e.target.value)}
+              onChange={(e) => {
+                setApellido(e.target.value);
+                clearError("apellido");
+              }}
+              required
+              aria-invalid={!!errors.apellido}
+              aria-describedby={
+                errors.apellido ? "edit-apellido-error" : undefined
+              }
             />
+            <FieldError id="edit-apellido-error" message={errors.apellido} />
           </div>
           <div className="mb-4">
             <label
@@ -177,9 +262,22 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             <input
               type="date"
               id="fecha_nacimiento"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={inputClass(!!errors.fechaNacimiento)}
               value={fechaNacimiento}
-              onChange={(e) => setFechaNacimiento(e.target.value)}
+              onChange={(e) => {
+                setFechaNacimiento(e.target.value);
+                clearError("fechaNacimiento");
+              }}
+              max={todayISO()}
+              required
+              aria-invalid={!!errors.fechaNacimiento}
+              aria-describedby={
+                errors.fechaNacimiento ? "edit-fecha-error" : undefined
+              }
+            />
+            <FieldError
+              id="edit-fecha-error"
+              message={errors.fechaNacimiento}
             />
           </div>
           <div className="mb-4">
@@ -188,15 +286,24 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             </label>
             <select
               id="genero"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={inputClass(!!errors.genero)}
               value={genero}
-              onChange={(e) => setGenero(e.target.value)}
+              onChange={(e) => {
+                setGenero(e.target.value);
+                clearError("genero");
+              }}
+              required
+              aria-invalid={!!errors.genero}
+              aria-describedby={
+                errors.genero ? "edit-genero-error" : undefined
+              }
             >
               <option value="">Seleccione el género</option>
               <option value="Masculino">Masculino</option>
               <option value="Femenino">Femenino</option>
               <option value="Otro">Otro</option>
             </select>
+            <FieldError id="edit-genero-error" message={errors.genero} />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="telefono">
@@ -205,11 +312,20 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             <input
               type="text"
               id="telefono"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={inputClass(!!errors.telefono)}
               placeholder="Ingrese el número de teléfono"
               value={telefono}
-              onChange={(e) => setTelefono(e.target.value)}
+              onChange={(e) => {
+                setTelefono(e.target.value);
+                clearError("telefono");
+              }}
+              required
+              aria-invalid={!!errors.telefono}
+              aria-describedby={
+                errors.telefono ? "edit-telefono-error" : undefined
+              }
             />
+            <FieldError id="edit-telefono-error" message={errors.telefono} />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="direccion">
@@ -218,13 +334,22 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
             <input
               type="text"
               id="direccion"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
+              className={inputClass(!!errors.direccion)}
               placeholder="Ingrese la dirección"
               value={direccion}
-              onChange={(e) => setDireccion(e.target.value)}
+              onChange={(e) => {
+                setDireccion(e.target.value);
+                clearError("direccion");
+              }}
+              required
+              aria-invalid={!!errors.direccion}
+              aria-describedby={
+                errors.direccion ? "edit-direccion-error" : undefined
+              }
             />
+            <FieldError id="edit-direccion-error" message={errors.direccion} />
           </div>
-          {user && user.role.toLowerCase() === "doctor" && (
+          {isDoctor && (
             <div className="mb-4">
               <label
                 className="block text-gray-700 mb-2"
@@ -235,10 +360,22 @@ export function EditUserModal({ user, onSave, onClose }: EditUserModalProps) {
               <input
                 type="text"
                 id="especialidad"
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                className={inputClass(!!errors.especialidad)}
                 placeholder="Ingrese la especialización del doctor"
                 value={especialidad}
-                onChange={(e) => setEspecialidad(e.target.value)}
+                onChange={(e) => {
+                  setEspecialidad(e.target.value);
+                  clearError("especialidad");
+                }}
+                required
+                aria-invalid={!!errors.especialidad}
+                aria-describedby={
+                  errors.especialidad ? "edit-especialidad-error" : undefined
+                }
+              />
+              <FieldError
+                id="edit-especialidad-error"
+                message={errors.especialidad}
               />
             </div>
           )}
